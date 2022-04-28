@@ -1,0 +1,10 @@
+node_modules
+
+# Build folder
+build/out
+
+# Instagram photos
+assets/instagram
+
+# SSL certificates
+*.pem

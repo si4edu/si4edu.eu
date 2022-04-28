@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://si4edu.org/sitemap.xml

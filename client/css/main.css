@@ -1,0 +1,145 @@
+embed('client/css/normalize.css');
+
+:root {
+    --color0: #20469b;
+    --color1: #ecd81a;
+}
+
+.page {
+    margin: 150px 0 100px 0;
+}
+
+a {
+    text-decoration: none;
+    transition: all 100ms;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.button {
+    background: var(--color1);
+    color: #000;
+    padding: 15px 25px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 5%;
+    box-sizing: border-box;
+    border-bottom: 3px solid var(--color0);
+    z-index: 100;
+}
+
+#home-link {
+    width: 90px;
+    height: 60px;
+    background-image: url('/logo.png');
+    border-radius: 10px;
+}
+
+.nav-link {
+    color: var(--color0);
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.nav-link:hover {
+    color: var(--color1);
+}
+
+a:active, button:active {
+    transform: translateY(2px);
+}
+
+.nav-link.page-link-active {
+    text-decoration: underline;
+}
+
+.nav-lang {
+    background: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    box-sizing: content-box;
+    cursor: pointer;
+}
+
+.nav-lang > svg {
+    width: 100%;
+    height: 100%;
+}
+
+#messenger:hover {
+    fill: var(--color1) !important;
+}
+
+@media only screen and (max-width: 700px) {
+    nav[open] {
+        height: unset !important;
+        flex-direction: column;
+    }
+
+    nav[open] > #nav-links {
+        flex-direction: column;
+        display: flex !important;
+        margin-top: 10px;
+    }
+
+    nav[open] > #nav-links > a,
+    nav[open] > #nav-links > button {
+        margin: 10px 0 0 0 !important;
+    }
+
+    #nav-first {
+        width: 100%;
+    }
+    
+    #nav-links {
+        display: none !important;
+    }
+
+    #mobile-menu {
+        display: block !important;
+    }
+
+    #messenger {
+        right: 20px !important;
+        bottom: 20px !important;
+    }
+
+    .page {
+        margin-bottom: 50px;
+    }
+}
+
+embed('client/css/landing.css');
+embed('client/css/join.css');
+embed('client/css/team.css');
+embed('client/css/about.css');
+embed('client/css/register.css');
+
+#footer-mail:hover {
+    color: var(--color1) !important;
+}
+
+.footer-link {
+    width: 20px;
+    height: 20px;
+    margin: 10px;
+    fill: var(--color0);
+}

@@ -1,0 +1,21 @@
+{
+    "name": "si4edu",
+    "type": "module",
+    "browserslist": [
+        "defaults"
+    ],
+    "scripts": {
+        "start": "node build/build.js && node build/out/server.js",
+        "debug": "node build/build.js --debug && node build/out/server.js --debug"
+    },
+    "dependencies": {
+        "@babel/core": "^7.16.0",
+        "@babel/preset-env": "^7.16.4",
+        "autoprefixer": "^10.4.2",
+        "html-minifier": "^4.0.0",
+        "instagram-web-api": "^2.2.2",
+        "node-fetch": "^3.2.3",
+        "postcss": "^8.4.7",
+        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.6.0"
+    }
+}

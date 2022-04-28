@@ -1,0 +1,29 @@
+<div id="register" class="page" style="display: none;">
+    <h1 style="display: flex; justify-content: center;">REGISTER</h1>
+    <h2 style="display: flex; justify-content: center;">Start your adventure with us today</h2>
+    <div id="register-box">
+        <form id="register-form">
+            <span style="margin-bottom: 10px; font-size: 24px;">I want to become a</span>
+            <div style="display: flex; margin-bottom: 10px; font-size: 18px;">
+                <label style="margin-right: 10px;">
+                    <input id="student-role" style="margin-right: 5px;" type="radio" name="role" value="student">
+                    Student
+                </label>
+                <label style="margin-left: 10px;">
+                    <input id="buddy-role" style="margin-right: 5px;" type="radio" name="role" value="buddy">
+                    Buddy
+                </label>
+            </div>
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+            <input type="password" placeholder="Repeat Password" required>
+            <button class="button" style="margin-top: 20px;" type="submit">Register</button>
+        </form>
+        <hr style="margin: 20px 0;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <span>Have an account already?</span>
+            <a class="page-link button" style="margin-left: 20px;" href="/login">Login</a>
+        </div>
+    </div>
+</div>

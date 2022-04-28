@@ -1,0 +1,43 @@
+.join-box {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--color0);
+    color: var(--color1);
+    padding: 70px 50px;
+    margin: 0 20px;
+    border-radius: 20px;
+}
+
+.join-box > h2 {
+    text-align: center;
+}
+
+.form-button {
+    display: flex;
+    padding: 15px 20px;
+    background: var(--color1);
+    color: #000;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.form-button > svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+@media only screen and (max-width: 700px) {
+    #join-boxes {
+        flex-direction: column;
+    }
+
+    .join-box {
+        width: 100%;
+        margin: 20px 0;
+        box-sizing: border-box;
+    }
+}
