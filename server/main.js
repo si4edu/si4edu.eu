@@ -6,7 +6,7 @@ embed('server/static.js');
 let photos = [];
 
 function fetchPhotos() {
-    const client = new IG({ username: 'Gowno123252', password: 'Gowno123251' });
+    const client = new IG(JSON.parse(FS.readFileSync('instagram.json')));
     client.login().then(() => {
         client.getPhotosByUsername({ username: 'si4edu', first: 10 }).then(data => {
             data = data.user.edge_owner_to_timeline_media.edges;
@@ -38,7 +38,7 @@ FS.readdirSync('assets/instagram').forEach(file => {
 });
 
 // Fetch photos every hour
-setInterval(fetchPhotos, 1000 * 60 * 30);
+// setInterval(fetchPhotos, 1000 * 60 * 30);
 
 app.get('/photos', res => {
     res.onAborted(() => { });

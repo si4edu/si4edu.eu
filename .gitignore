@@ -8,3 +8,6 @@ assets/instagram
 
 # SSL certificates
 *.pem
+
+# Instagram credentials
+instagram.json
