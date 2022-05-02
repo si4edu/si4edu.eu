@@ -1,6 +1,6 @@
 import {createHash, randomBytes} from 'crypto';
 import IG from 'instagram-web-api';
-import fetch, { AbortError } from 'node-fetch';
+import fetch from 'node-fetch';
 embed('server/app.js');
 embed('server/static.js');
 
@@ -108,12 +108,10 @@ app.put('/user/update', res => {
             res.end()
             return;
         }
-        for (var key in obj) {
-            if(key === "password") {
-                obj[key] = createHash("sha256")
-                    .update(Buffer.from(obj.password))
-                    .digest("hex");
-            }
+        if(obj.hasOwnProperty("password")) {
+            obj.password = createHash("sha256")
+                .update(Buffer.from(obj.password))
+                .digest("hex");
         }
         const finalObj = {
             "email": user.email,
@@ -165,24 +163,24 @@ function readJson(res, cb, err) {
     res.onData((ab, isLast) => {
         let chunk = Buffer.from(ab);
         if (isLast) {
-            let json;
-            if (buffer) {
-                try {
-                    json = JSON.parse(Buffer.concat([buffer, chunk]));
-                } catch (e) {
-                    res.close();
-                    return;
-                }
-                cb(json);
-            } else {
-                try {
-                    json = JSON.parse(chunk);
-                } catch (e) {
-                    res.close();
-                    return;
-                }
-                cb(json);
+        let json;
+        if (buffer) {
+            try {
+                json = JSON.parse(Buffer.concat([buffer, chunk]));
+            } catch (e) {
+                res.close();
+                return;
             }
+            cb(json);
+        } else {
+            try {
+                json = JSON.parse(chunk);
+            } catch (e) {
+                res.close();
+                return;
+            }
+            cb(json);
+        }
         } else {
             if (buffer) {
                 buffer = Buffer.concat([buffer, chunk]);
