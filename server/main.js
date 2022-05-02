@@ -51,12 +51,22 @@ app.post('/user/register', res => {
     readJson(res, (obj) => {
         if(!obj.hasOwnProperty("email") 
             || !obj.hasOwnProperty("password")) {
-            res.end("400");
+            res.writeHeader("status", "400");
+            res.end();
             return;
         }
+        if (!FS.existsSync("users/lookup.json")) {
+            FS.writeFileSync("users/lookup.json", "{}");
+        }
+        let lookup = JSON.parse(FS.readFileSync("users/lookup.json"));
+        let token;
+        do {
+            token = randomBytes(16).toString("hex");
+        } while(lookup.hasOwnProperty(token));
         const filename = `users/${obj.email}`;
-        if(FS.existsSync(filename)) {
-            res.end("405");
+        if (FS.existsSync(filename)) {
+            res.writeHeader("status", "405");
+            res.end();
             return;
         }
         obj.password = createHash("sha256")
@@ -65,30 +75,37 @@ app.post('/user/register', res => {
         const finalObj = {
             "email": obj.email,
             "password": obj.password,
-            "token": randomBytes(16).toString("hex") + "." + obj.email
+            "token": token
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
-        res.end("200");
+        lookup[token] = obj.email;
+        FS.writeFileSync("users/lookup.json", JSON.stringify(lookup));
+        res.writeHeader("status", "200");
+        res.end();
     }, () => {
-        res.end("400");
+        res.writeHeader("status", "400");
+        res.end();
     });
 });
 
 app.put('/user/update', res => {
     readJson(res, (obj) => {
         if(!obj.hasOwnProperty("token")) {
-            res.end("400");
+            res.writeHeader("status", "400");
+            res.end();
             return;
         }
-        const email = obj.token.slice(obj.token.indexOf(".")+1);
-        let filename = `users/${email}`;
-        if (!FS.existsSync(filename)) {
-            res.end("404");
+        const lookup = JSON.parse(FS.readFileSync("users/lookup.json"));
+        if (!lookup.hasOwnProperty(obj.token)) {
+            res.writeHeader("status", "404");
+            res.end();
             return;
         }
+        const filename = `users/${lookup[obj.token]}`;
         let user = JSON.parse(FS.readFileSync(filename));
         if (user.token !== obj.token) {
-            res.end("401")
+            res.writeHeader("status", "401");
+            res.end()
             return;
         }
         for (var key in obj) {
@@ -104,9 +121,11 @@ app.put('/user/update', res => {
             "token": user.token
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
-        res.end("200");
+        res.writeHeader("status", "200");
+        res.end();
     }, () => {
-        res.end("400");
+        res.writeHeader("status", "400");
+        res.end();
     }); 
 });
 
@@ -114,12 +133,14 @@ app.post('/user/login', res => {
     readJson(res, (obj) => {
         if(!obj.hasOwnProperty("email") 
             || !obj.hasOwnProperty("password")) {
-            res.end("400");
+            res.writeHeader("status", "400");
+            res.end();
             return;
         }
         let filename = `users/${obj.email}`;
         if(!FS.existsSync(filename)) {
-            res.end("404");
+            res.writeHeader("status", "404");
+            res.end();
             return;
         }
         obj.password = createHash("sha256")
@@ -127,12 +148,15 @@ app.post('/user/login', res => {
             .digest("hex");
         let user = JSON.parse(FS.readFileSync(filename));
         if(user.password !== obj.password) {
-            res.end("401");
+            res.writeHeader("status", "401");
+            res.end();
             return;
         }
+        res.writeHeader("status", "200");
         res.end(user.token);
     }, () => {
-        res.end("400");
+        res.writeHeader("status", "400");
+        res.end();
     });
 });
 
