@@ -47,74 +47,134 @@ app.get('/photos', res => {
     res.end(JSON.stringify(photos));
 });
 
-app.post('/user/register', (res, req) => {
-  const query = req.getQuery().toString().split("%00");
-  const filename = `users/${query[0]}.json`;
-  if(FS.existsSync(filename)) {
-    res.end("User already exists");
-    return;
-  }
-  const password = createHash('sha256')
-    .update(Buffer.from(query[1]))
-    .digest('hex');
-  if(query.length !== 2) {
-    res.end("Invalid number of arguments");
-    return;
-  }
-  const obj = {
-    "email": query[0],
-    "password": password
-  };
-  FS.writeFileSync(filename, JSON.stringify(obj));
-  res.end("Added user to the database");
+app.post('/user/register', res => {
+    readJson(res, (obj) => {
+        if(!obj.hasOwnProperty("email") 
+            || !obj.hasOwnProperty("password")
+            || !obj.hasOwnProperty("username")) {
+            res.end("400");
+            return;
+        }
+        const filename = `users/${obj.email}`;
+        if(FS.existsSync(filename)) {
+            res.end("405");
+            return;
+        }
+        obj.password = createHash("sha256")
+            .update(Buffer.from(obj.password))
+            .digest("hex");
+        const finalObj = {
+            "email": obj.email,
+            "password": obj.password,
+            "username": obj.username
+        };
+        FS.writeFileSync(filename, JSON.stringify(finalObj));
+        res.end("200");
+    }, () => {
+        res.end("400");
+    });
 });
 
-app.put('/user/update', (res, req) => {
-  const query = req.getQuery().toString().split("%00");
-  if(query.length !== 4) {
-    res.end("Invalid number of arguments");
-    return;
-  }
-  let filename = `users/${query[0]}.json`;
-  if(!FS.existsSync(filename)) {
-    res.end("User doesn't exist");
-    return;
-  }
-  const password = createHash('sha256')
-    .update(Buffer.from(query[1]))
-    .digest('hex');
-  let user = JSON.parse(FS.readFileSync(filename));
-  if(user.password !== password) {
-    res.end("Passwords doesn't match");
-    return;
-  }
-  FS.unlinkSync(filename);
-  user.email = query[2];
-  user.password = createHash('sha256')
-    .update(Buffer.from(query[3]))
-    .digest('hex');
-  FS.writeFileSync(`users/${query[2]}.json`, JSON.stringify(user));
-  res.end("User updated");
+app.put('/user/update', res => {
+    readJson(res, (obj) => {
+        if(!obj.hasOwnProperty("email") 
+            || !obj.hasOwnProperty("password")
+            || !obj.hasOwnProperty("new_arguments")) {
+            res.end("400");
+            return;
+        }
+        let filename = `users/${obj.email}`;
+        if (!FS.existsSync(filename)) {
+            res.end("404");
+            return;
+        }
+        obj.password = createHash("sha256")
+            .update(Buffer.from(obj.password))
+            .digest("hex");
+        let user = JSON.parse(FS.readFileSync(filename));
+        if (user.password !== obj.password) {
+            res.end("401");
+            return;
+        }
+        for (var key in obj.new_arguments) {
+            if(key === "username") {
+                obj[key] = obj.new_arguments[key];
+            }
+            if(key === "password") {
+                obj[key] = createHash("sha256")
+                    .update(Buffer.from(obj.password))
+                    .digest("hex");
+            }
+        }
+        const finalObj = {
+            "email": obj.email,
+            "password": obj.password,
+            "username": obj.username
+        };
+        FS.writeFileSync(filename, JSON.stringify(finalObj));
+        res.end("200");
+    }, () => {
+        res.end("400");
+    }); 
 });
 
-app.post('/user/login', (res, req) => {
-  const query = req.getQuery().toString().split("%00");
-  let filename = `users/${query[0]}.json`;
-  if(query.length !== 2) {
-    res.end("Invalid number of arguments");
-    return;
-  }
-  if(!FS.existsSync(filename)) {
-    res.end("User doesn't exist");
-    return;
-  }
-  const password = createHash('sha256')
-    .update(Buffer.from(query[1]))
-    .digest('hex');
-  let user = JSON.parse(FS.readFileSync(filename));
-  if(user.password !== password) {
-    res.end("Invalid Password");
-    return;
-  }
-  res.end("User logged in");
+app.post('/user/login', res => {
+    readJson(res, (obj) => {
+        if(!obj.hasOwnProperty("email") 
+            || !obj.hasOwnProperty("password")) {
+            res.end("400");
+            return;
+        }
+        let filename = `users/${obj.email}`;
+        if(!FS.existsSync(filename)) {
+            res.end("404");
+            return;
+        }
+        obj.password = createHash("sha256")
+            .update(Buffer.from(obj.password))
+            .digest("hex");
+        let user = JSON.parse(FS.readFileSync(filename));
+        if(user.password !== obj.password) {
+            res.end("401");
+            return;
+        }
+        res.end("200");
+    }, () => {
+        res.end("400");
+    });
 });
+
+function readJson(res, cb, err) {
+    let buffer;
+    res.onData((ab, isLast) => {
+        let chunk = Buffer.from(ab);
+        if (isLast) {
+        let json;
+        if (buffer) {
+            try {
+            json = JSON.parse(Buffer.concat([buffer, chunk]));
+            } catch (e) {
+            res.close();
+            return;
+            }
+            cb(json);
+        } else {
+            try {
+            json = JSON.parse(chunk);
+            } catch (e) {
+            res.close();
+            return;
+            }
+            cb(json);
+        }
+        } else {
+            if (buffer) {
+                buffer = Buffer.concat([buffer, chunk]);
+            } else {
+                buffer = Buffer.concat([chunk]);
+            }
+        }
+    });
+
+    res.onAborted(err);
+}
