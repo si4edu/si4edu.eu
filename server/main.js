@@ -1,4 +1,4 @@
-import {createHash} from 'crypto';
+import {createHash, randomBytes} from 'crypto';
 import IG from 'instagram-web-api';
 import fetch, { AbortError } from 'node-fetch';
 embed('server/app.js');
@@ -50,8 +50,7 @@ app.get('/photos', res => {
 app.post('/user/register', res => {
     readJson(res, (obj) => {
         if(!obj.hasOwnProperty("email") 
-            || !obj.hasOwnProperty("password")
-            || !obj.hasOwnProperty("username")) {
+            || !obj.hasOwnProperty("password")) {
             res.end("400");
             return;
         }
@@ -66,7 +65,7 @@ app.post('/user/register', res => {
         const finalObj = {
             "email": obj.email,
             "password": obj.password,
-            "username": obj.username
+            "token": randomBytes(16).toString("hex") + "." + obj.email
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         res.end("200");
@@ -77,29 +76,22 @@ app.post('/user/register', res => {
 
 app.put('/user/update', res => {
     readJson(res, (obj) => {
-        if(!obj.hasOwnProperty("email") 
-            || !obj.hasOwnProperty("password")
-            || !obj.hasOwnProperty("new_arguments")) {
+        if(!obj.hasOwnProperty("token")) {
             res.end("400");
             return;
         }
-        let filename = `users/${obj.email}`;
+        const email = obj.token.slice(obj.token.indexOf(".")+1);
+        let filename = `users/${email}`;
         if (!FS.existsSync(filename)) {
             res.end("404");
             return;
         }
-        obj.password = createHash("sha256")
-            .update(Buffer.from(obj.password))
-            .digest("hex");
         let user = JSON.parse(FS.readFileSync(filename));
-        if (user.password !== obj.password) {
-            res.end("401");
+        if (user.token !== obj.token) {
+            res.end("401")
             return;
         }
-        for (var key in obj.new_arguments) {
-            if(key === "username") {
-                obj[key] = obj.new_arguments[key];
-            }
+        for (var key in obj) {
             if(key === "password") {
                 obj[key] = createHash("sha256")
                     .update(Buffer.from(obj.password))
@@ -107,9 +99,9 @@ app.put('/user/update', res => {
             }
         }
         const finalObj = {
-            "email": obj.email,
+            "email": user.email,
             "password": obj.password,
-            "username": obj.username
+            "token": user.token
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         res.end("200");
@@ -138,7 +130,7 @@ app.post('/user/login', res => {
             res.end("401");
             return;
         }
-        res.end("200");
+        res.end(user.token);
     }, () => {
         res.end("400");
     });
