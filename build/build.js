@@ -45,5 +45,4 @@ async function embed(file) {
 
     // Build Server
     FS.writeFileSync('build/out/server.js', await embed(load('server/main.js')));
-    FS.appendFileSync('build/out/server.js', await embed(load('server/user.js')));
 })();

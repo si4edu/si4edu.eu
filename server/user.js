@@ -23,11 +23,11 @@ app.post('/user/register', res => {
             .update(Buffer.from(obj.password))
             .digest('hex');
         const finalObj = {
-            'email': obj.email,
-            'password': obj.password,
-            'fullname': obj.fullname,
-            'role': obj.role,
-            'token': token
+            email: obj.email,
+            password: obj.password,
+            fullname: obj.fullname,
+            role: obj.role,
+            token: token
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         lookup[token] = obj.email;
@@ -66,9 +66,9 @@ app.put('/user/update', res => {
                 .digest('hex');
         }
         const finalObj = {
-            'email': user.email,
-            'password': obj.password,
-            'token': user.token
+            email: user.email,
+            password: obj.password,
+            token: user.token
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         res.writeHeader('status', '200');

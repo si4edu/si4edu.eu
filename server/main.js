@@ -3,6 +3,7 @@ import IG from 'instagram-web-api';
 import fetch from 'node-fetch';
 embed('server/app.js');
 embed('server/static.js');
+embed('server/user.js');
 
 let photos = [];
 
