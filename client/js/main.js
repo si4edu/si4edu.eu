@@ -58,6 +58,49 @@ function autorun() {
             nav.removeAttribute('open');
         }
     };
+
+    let reg_role = 'student';
+    document.querySelector('#register-form').onsubmit = () => {
+        event.preventDefault();
+        const fullname = document.getElementById('reg-fullname').value; 
+        const email = document.getElementById('reg-email').value; 
+        const password = document.getElementById('reg-password').value; 
+        fetch(
+            '/user/register',
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    fullname: fullname,
+                    role: reg_role
+                })
+            }
+        ).then(res => {
+            console.log(res.status);
+            return res.text()
+        }).then(data => console.log(data));
+    };
+    document.querySelector('#student-role').onclick = () => reg_role = 'student';
+    document.querySelector('#buddy-role').onclick = () => reg_role = 'buddy';
+    document.querySelector('#login-form').onsubmit = () => {
+        event.preventDefault();
+        const email = document.getElementById('log-email').value;
+        const password = document.getElementById('log-password').value;
+        fetch(
+            '/user/login',
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        ).then(res => {
+            console.log(res.status);
+            return res.text()
+        }).then(data => console.log(data));
+    };
 }
 
 function onload() { }
