@@ -34,7 +34,7 @@ FS.readdirSync('assets/instagram').forEach(file => {
     app.get(`/photos/${file}`, res => {
         res.onAborted(() => { });
         res.writeHeader('Content-Type', 'image/png');
-        res.end(data)
+        res.end(data);
     });
 });
 
