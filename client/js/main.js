@@ -60,7 +60,7 @@ function autorun() {
     };
 
     let reg_role = 'student';
-    document.getElementById('register-form').onsubmit = () => {
+    document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
         const fullname = document.getElementById('reg-fullname').value; 
         const email = document.getElementById('reg-email').value; 
@@ -84,7 +84,7 @@ function autorun() {
     let s_recaptcha = false;
     document.getElementById('student-role').onclick = () => reg_role = 'student';
     document.getElementById('buddy-role').onclick = () => reg_role = 'buddy';
-    document.getElementById('login-form').onsubmit = () => {
+    document.getElementById('login-form').onsubmit = e => {
         e.preventDefault();
         const email = document.getElementById('log-email').value;
         const password = document.getElementById('log-password').value;
