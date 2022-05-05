@@ -106,8 +106,6 @@ function autorun() {
     };
 }
 
-function onload() { }
-
 if (document.addEventListener) {
     document.addEventListener('DOMContentLoaded', autorun, false);
     window.addEventListener('load', onload, false);
