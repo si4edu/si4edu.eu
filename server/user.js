@@ -1,5 +1,5 @@
 import pkg from 'nodemailer';
-const {createTransport, createTestAccount, getTestMessageUrl} = pkg;
+const {createTransport} = pkg;
 
 app.post('/user/register', res => {
     readJson(res, (obj) => {
@@ -156,28 +156,23 @@ function readJson(res, cb, err) {
 }
 
 function sendRegMail(mail) {
-    createTestAccount().then(tA => {
-        let transporter = createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
-            auth: {
-                user: tA.user,
-                pass: tA.pass
-            }
-        });
+    const data = JSON.parse(FS.readFileSync('mail.json')); 
+    let transporter = createTransport({
+        host: data.host,
+        port: data.port,
+        secure: data.secure,
+        auth: data.auth
+    });
 
-        let info = transporter.sendMail({
-            from: '"Someone" <someMail@mail.com>',
-            to: mail,
-            subject: "Test subject",
-            text: "Test text",
-            html: "<h1>Test HTML</h1>"
-        });
-        
-        info.then(data => {
-            console.log('Message sent: %s', data.messageId);
-            console.log('Preview URL: %s', getTestMessageUrl(data));
-        });
-    })
+    let info = transporter.sendMail({
+        from: `"Someone" ${data.auth.user}`,
+        to: mail,
+        subject: "Test subject",
+        text: "Test text",
+        html: "<h1>Test HTML</h1>"
+    });
+    
+    info.then(d => {
+        console.log('Message sent: %s', d.messageId);
+    });
 }
