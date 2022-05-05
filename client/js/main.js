@@ -82,9 +82,9 @@ function autorun() {
         }).then(data => console.log(data));
     };
     let s_recaptcha = false;
-    document.querySelector('#student-role').onclick = () => reg_role = 'student';
-    document.querySelector('#buddy-role').onclick = () => reg_role = 'buddy';
-    document.querySelector('#login-form').onsubmit = () => {
+    document.getElementById('#student-role').onclick = () => reg_role = 'student';
+    document.getElementById('#buddy-role').onclick = () => reg_role = 'buddy';
+    document.getElementById('#login-form').onsubmit = () => {
         event.preventDefault();
         const email = document.getElementById('log-email').value;
         const password = document.getElementById('log-password').value;
@@ -186,8 +186,8 @@ function autorun() {
     };
 
     let reg_role = 'student';
-    document.querySelector('#register-form').onsubmit = () => {
-        event.preventDefault();
+    document.getElementById('register-form').onsubmit = () => {
+        e.preventDefault();
         const fullname = document.getElementById('reg-fullname').value; 
         const email = document.getElementById('reg-email').value; 
         const password = document.getElementById('reg-password').value; 
@@ -208,13 +208,13 @@ function autorun() {
         }).then(data => console.log(data));
     };
     let s_recaptcha = false;
-    document.querySelector('#student-role').onclick = () => reg_role = 'student';
-    document.querySelector('#buddy-role').onclick = () => reg_role = 'buddy';
-    document.querySelector('#login-form').onsubmit = () => {
-        event.preventDefault();
+    document.getElementById('student-role').onclick = () => reg_role = 'student';
+    document.getElementById('buddy-role').onclick = () => reg_role = 'buddy';
+    document.getElementById('login-form').onsubmit = () => {
+        e.preventDefault();
         const email = document.getElementById('log-email').value;
         const password = document.getElementById('log-password').value;
-        let rec = document.getElementsById('recaptcha').value;
+        let rec = document.getElementById('recaptcha').value;
         fetch(
             '/user/login',
             {
@@ -232,8 +232,6 @@ function autorun() {
     };
 }
 
-function onload() { }
-
 if (document.addEventListener) {
     document.addEventListener('DOMContentLoaded', autorun, false);
     window.addEventListener('load', onload, false);
@@ -246,3 +244,5 @@ if (document.addEventListener) {
         onload();
     };
 }
+
+function onload() { }

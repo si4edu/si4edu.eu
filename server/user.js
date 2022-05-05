@@ -1,7 +1,6 @@
 import pkg from 'nodemailer';
 const {createTransport} = pkg;
 
-
 app.post('/user/register', res => {
     readJson(res, (obj) => {
         if (!obj.hasOwnProperty('email') || !obj.hasOwnProperty('password') || !obj.hasOwnProperty('fullname') || !obj.hasOwnProperty('role')) {
