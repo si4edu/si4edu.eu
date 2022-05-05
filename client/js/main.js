@@ -1,119 +1,184 @@
-function updatePage(href) {
-    for (const page of document.getElementsByClassName('page')) {
-        page.style = 'display:none';
-    }
+import pkg from 'nodemailer';
+const {createTransport, createTestAccount, getTestMessageUrl} = pkg;
 
-    for (const link of document.querySelectorAll('.page-link')) {
-        link.classList.remove('page-link-active');
-    }
 
-    let path = href.split('/');
-    const page = document.getElementById(path[1]);
-    if (!page) {
-        document.getElementById('landing').style = document.getElementById('contact').style = '';
-        history.replaceState(null, '', href = '/');
-        return;
-    }
-    page.style = '';
-
-    if (href != '/') {
-        document.querySelector(`[href="/${path[1]}"]`)?.classList.add('page-link-active');
-    }
-}
-
-function autorun() {
-    window.onpopstate = () => {
-        updatePage(location.pathname);
-    };
-
-    for (const link of document.querySelectorAll('.page-link')) {
-        link.onclick = () => {
-            history.pushState(null, '', link.href);
-            updatePage(link.getAttribute('href'));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            nav.open = false;
-            nav.removeAttribute('open');
-            return false;
+app.post('/user/register', res => {
+    readJson(res, (obj) => {
+        if (!obj.hasOwnProperty('email') || !obj.hasOwnProperty('password') || !obj.hasOwnProperty('fullname') || !obj.hasOwnProperty('role')) {
+            res.writeStatus('400');
+            res.end();
+            return;
         }
-    }
+        if (!FS.existsSync('users/lookup.json')) {
+            FS.writeFileSync('users/lookup.json', '{}');
+        }
+        let lookup = JSON.parse(FS.readFileSync('users/lookup.json'));
+        let token;
+        do {
+            token = randomBytes(16).toString('hex');
+        } while(lookup.hasOwnProperty(token));
+        const filename = `users/${obj.email}`;
+        if (FS.existsSync(filename)) {
+            res.writeStatus('405');
+            res.end();
+            return;
+        }
+        obj.password = createHash('sha256')
+            .update(Buffer.from(obj.password))
+            .digest('hex');
+        const finalObj = {
+            email: obj.email,
+            password: obj.password,
+            fullname: obj.fullname,
+            role: obj.role,
+            token: token
+        };
+        FS.writeFileSync(filename, JSON.stringify(finalObj));
+        lookup[token] = obj.email;
+        FS.writeFileSync('users/lookup.json', JSON.stringify(lookup));
+        sendRegMail(obj.email);
+        res.writeStatus('200');
+        res.end();
+    }, () => {
+        res.writeStatus('400');
+        res.end();
+    });
+});
 
-    updatePage(location.pathname);
+app.put('/user/update', res => {
+    readJson(res, (obj) => {
+        if (!obj.hasOwnProperty('token')) {
+            res.writeStatus('400');
+            res.end();
+            return;
+        }
+        const lookup = JSON.parse(FS.readFileSync('users/lookup.json'));
+        if (!lookup.hasOwnProperty(obj.token)) {
+            res.writeStatus('404');
+            res.end();
+            return;
+        }
+        const filename = `users/${lookup[obj.token]}`;
+        let user = JSON.parse(FS.readFileSync(filename));
+        if (user.token !== obj.token) {
+            res.writeStatus('401');
+            res.end()
+            return;
+        }
+        if (obj.hasOwnProperty('password')) {
+            obj.password = createHash('sha256')
+                .update(Buffer.from(obj.password))
+                .digest('hex');
+        }
+        let fullname = user.fullname;
+        if (obj.hasOwnProperty('fullname')) {
+            fullname = obj.fullname;
+        }
+        const finalObj = {
+            email: user.email,
+            password: obj.password,
+            fullname: fullname,
+            token: user.token
+        };
+        FS.writeFileSync(filename, JSON.stringify(finalObj));
+        res.writeStatus('200');
+        res.end();
+    }, () => {
+        res.writeStatus('400');
+        res.end();
+    }); 
+});
 
-    fetch('/photos').then(res => res.json()).then(data => {
-        for (const photo of data) {
-            const img = document.createElement('a');
-            img.style = `background-image:url("/photos/${photo}")`;
-            img.href = `https://instagram.com/p/${photo}`;
-            img.target = '_blank';
-            document.getElementById('instagram-feed').appendChild(img);
+app.post('/user/login', res => {
+    readJson(res, (obj) => {
+        if (!obj.hasOwnProperty('email') 
+            || !obj.hasOwnProperty('password')) {
+            res.writeStatus('400');
+            res.end();
+            return;
+        }
+        console.log(obj.captcha);
+        let filename = `users/${obj.email}`;
+        if (!FS.existsSync(filename)) {
+            res.writeStatus('404');
+            res.end();
+            return;
+        }
+        obj.password = createHash('sha256')
+            .update(Buffer.from(obj.password))
+            .digest('hex');
+        let user = JSON.parse(FS.readFileSync(filename));
+        if (user.password !== obj.password) {
+            res.writeStatus('401');
+            res.end();
+            return;
+        }
+        res.writeStatus('200');
+        res.end(user.token);
+    }, () => {
+        res.writeStatus('400');
+        res.end();
+    });
+});
+
+function readJson(res, cb, err) {
+    let buffer;
+    res.onData((ab, isLast) => {
+        let chunk = Buffer.from(ab);
+        if (isLast) {
+        let json;
+        if (buffer) {
+            try {
+                json = JSON.parse(Buffer.concat([buffer, chunk]));
+            } catch (e) {
+                res.close();
+                return;
+            }
+            cb(json);
+        } else {
+            try {
+                json = JSON.parse(chunk);
+            } catch (e) {
+                res.close();
+                return;
+            }
+            cb(json);
+        }
+        } else {
+            if (buffer) {
+                buffer = Buffer.concat([buffer, chunk]);
+            } else {
+                buffer = Buffer.concat([chunk]);
+            }
         }
     });
 
-    const nav = document.querySelector('nav');
-    document.getElementById('mobile-menu').onclick = () => {
-        nav.open = !nav.open;
-        if (nav.open) {
-            nav.setAttribute('open', true);
-        } else {
-            nav.removeAttribute('open');
-        }
-    };
-
-    let reg_role = 'student';
-    document.querySelector('#register-form').onsubmit = () => {
-        event.preventDefault();
-        const fullname = document.getElementById('reg-fullname').value; 
-        const email = document.getElementById('reg-email').value; 
-        const password = document.getElementById('reg-password').value; 
-        fetch(
-            '/user/register',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                    fullname: fullname,
-                    role: reg_role
-                })
-            }
-        ).then(res => {
-            console.log(res.status);
-            return res.text()
-        }).then(data => console.log(data));
-    };
-    document.querySelector('#student-role').onclick = () => reg_role = 'student';
-    document.querySelector('#buddy-role').onclick = () => reg_role = 'buddy';
-    document.querySelector('#login-form').onsubmit = () => {
-        event.preventDefault();
-        const email = document.getElementById('log-email').value;
-        const password = document.getElementById('log-password').value;
-        fetch(
-            '/user/login',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            }
-        ).then(res => {
-            console.log(res.status);
-            return res.text()
-        }).then(data => console.log(data));
-    };
+    res.onAborted(err);
 }
 
-function onload() { }
+function sendRegMail(mail) {
+    createTestAccount().then(tA => {
+        let transporter = createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false,
+            auth: {
+                user: tA.user,
+                pass: tA.pass
+            }
+        });
 
-if (document.addEventListener) {
-    document.addEventListener('DOMContentLoaded', autorun, false);
-    window.addEventListener('load', onload, false);
-} else if (document.attachEvent) {
-    document.attachEvent('onreadystatechange', autorun);
-    window.attachEvent('onload', onload);
-} else {
-    window.onload = () => {
-        autorun();
-        onload();
-    };
+        let info = transporter.sendMail({
+            from: '"Someone" <someMail@mail.com>',
+            to: mail,
+            subject: "Test subject",
+            text: "Test text",
+            html: "<h1>Test HTML</h1>"
+        });
+        
+        info.then(data => {
+            console.log('Message sent: %s', data.messageId);
+            console.log('Preview URL: %s', getTestMessageUrl(data));
+        });
+    })
 }
