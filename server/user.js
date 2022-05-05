@@ -1,3 +1,7 @@
+import pkg from 'nodemailer';
+const {createTransport} = pkg;
+
+
 app.post('/user/register', res => {
     readJson(res, (obj) => {
         if (!obj.hasOwnProperty('email') || !obj.hasOwnProperty('password') || !obj.hasOwnProperty('fullname') || !obj.hasOwnProperty('role')) {
@@ -32,6 +36,7 @@ app.post('/user/register', res => {
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         lookup[token] = obj.email;
         FS.writeFileSync('users/lookup.json', JSON.stringify(lookup));
+        sendRegMail(obj.email);
         res.writeStatus('200');
         res.end();
     }, () => {
@@ -92,6 +97,7 @@ app.post('/user/login', res => {
             res.end();
             return;
         }
+        console.log(obj.captcha);
         let filename = `users/${obj.email}`;
         if (!FS.existsSync(filename)) {
             res.writeStatus('404');
@@ -149,3 +155,28 @@ function readJson(res, cb, err) {
 
     res.onAborted(err);
 }
+
+function sendRegMail(mail) {
+    let transporter = createTransport({
+        host: "smtp.office365.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "twopsix@outlook.com",
+            pass: "Cayueytd3705vPuW04g7"
+        }
+    });
+
+    let info = transporter.sendMail({
+        from: '"Someone" twopsix@outlook.com',
+        to: mail,
+        subject: "Test subject",
+        text: "Test text",
+        html: "<h1>Test HTML</h1>"
+    });
+
+    info.then(data => {
+        console.log('Message sent: %s', data.messageId);
+    });
+}
+
