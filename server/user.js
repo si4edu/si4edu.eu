@@ -156,14 +156,13 @@ function readJson(res, cb, err) {
 }
 
 function sendRegMail(mail) {
-    const password = FS.readFileSync('mail').toString(); 
     let transporter = createTransport({
         host: "smtp.mail.us-east-1.awsapps.com",
         port: 465,
         secure: true,
         auth: {
             user: "noreply@si4edu.eu",
-            pass: password
+            pass: SECRETS.mailpassword
         }
     });
 

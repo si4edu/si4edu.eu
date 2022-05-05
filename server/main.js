@@ -1,6 +1,9 @@
 import {createHash, randomBytes} from 'crypto';
 import IG from 'instagram-web-api';
 import fetch from 'node-fetch';
+import FS from 'fs';
+
+const SECRETS = JSON.parse(FS.readFileSync("secrets.json"));
 embed('server/app.js');
 embed('server/static.js');
 embed('server/user.js');

@@ -1,5 +1,3 @@
-import FS from 'fs';
-
 function load(path) { return FS.readFileSync(path); }
 
 function get(name, data, type) {
