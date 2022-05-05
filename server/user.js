@@ -1,5 +1,4 @@
-import pkg from 'nodemailer';
-const {createTransport} = pkg;
+import { createTransport } from 'nodemailer';
 
 app.post('/user/register', res => {
     readJson(res, (obj) => {
@@ -15,16 +14,14 @@ app.post('/user/register', res => {
         let token;
         do {
             token = randomBytes(16).toString('hex');
-        } while(lookup.hasOwnProperty(token));
+        } while (lookup.hasOwnProperty(token));
         const filename = `users/${obj.email}`;
         if (FS.existsSync(filename)) {
             res.writeStatus('405');
             res.end();
             return;
         }
-        obj.password = createHash('sha256')
-            .update(Buffer.from(obj.password))
-            .digest('hex');
+        obj.password = createHash('sha256').update(Buffer.from(obj.password)).digest('hex');
         const finalObj = {
             email: obj.email,
             password: obj.password,
@@ -35,7 +32,7 @@ app.post('/user/register', res => {
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         lookup[token] = obj.email;
         FS.writeFileSync('users/lookup.json', JSON.stringify(lookup));
-        sendRegMail(obj.email);
+        sendRegisterCode(obj.email);
         res.writeStatus('200');
         res.end();
     }, () => {
@@ -45,7 +42,7 @@ app.post('/user/register', res => {
 });
 
 app.put('/user/update', res => {
-    readJson(res, (obj) => {
+    readJson(res, obj => {
         if (!obj.hasOwnProperty('token')) {
             res.writeStatus('400');
             res.end();
@@ -85,13 +82,12 @@ app.put('/user/update', res => {
     }, () => {
         res.writeStatus('400');
         res.end();
-    }); 
+    });
 });
 
 app.post('/user/login', res => {
-    readJson(res, (obj) => {
-        if (!obj.hasOwnProperty('email') 
-            || !obj.hasOwnProperty('password')) {
+    readJson(res, obj => {
+        if (!obj.hasOwnProperty('email') || !obj.hasOwnProperty('password')) {
             res.writeStatus('400');
             res.end();
             return;
@@ -103,9 +99,7 @@ app.post('/user/login', res => {
             res.end();
             return;
         }
-        obj.password = createHash('sha256')
-            .update(Buffer.from(obj.password))
-            .digest('hex');
+        obj.password = createHash('sha256').update(Buffer.from(obj.password)).digest('hex');
         let user = JSON.parse(FS.readFileSync(filename));
         if (user.password !== obj.password) {
             res.writeStatus('401');
@@ -122,27 +116,28 @@ app.post('/user/login', res => {
 
 function readJson(res, cb, err) {
     let buffer;
+    res.onAborted(err);
     res.onData((ab, isLast) => {
         let chunk = Buffer.from(ab);
         if (isLast) {
-        let json;
-        if (buffer) {
-            try {
-                json = JSON.parse(Buffer.concat([buffer, chunk]));
-            } catch (e) {
-                res.close();
-                return;
+            let json;
+            if (buffer) {
+                try {
+                    json = JSON.parse(Buffer.concat([buffer, chunk]));
+                } catch (e) {
+                    res.close();
+                    return;
+                }
+                cb(json);
+            } else {
+                try {
+                    json = JSON.parse(chunk);
+                } catch (e) {
+                    res.close();
+                    return;
+                }
+                cb(json);
             }
-            cb(json);
-        } else {
-            try {
-                json = JSON.parse(chunk);
-            } catch (e) {
-                res.close();
-                return;
-            }
-            cb(json);
-        }
         } else {
             if (buffer) {
                 buffer = Buffer.concat([buffer, chunk]);
@@ -151,30 +146,23 @@ function readJson(res, cb, err) {
             }
         }
     });
-
-    res.onAborted(err);
 }
 
-function sendRegMail(mail) {
-    let transporter = createTransport({
-        host: "smtp.mail.us-east-1.awsapps.com",
-        port: 465,
-        secure: true,
-        auth: {
-            user: "noreply@si4edu.eu",
-            pass: SECRETS.mailpassword
-        }
-    });
-
-    let info = transporter.sendMail({
-        from: '"Someone" noreply@si4edu.eu',
-        to: mail,
-        subject: "Test subject",
-        text: "Test text",
-        html: "<h1>Test HTML</h1>"
-    });
-    
-    info.then(d => {
-        console.log('Message sent: %s', d.messageId);
+const transporter = createTransport({
+    host: 'smtp.mail.us-east-1.awsapps.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'noreply@si4edu.eu',
+        pass: SECRETS.pass
+    }
+});
+function sendRegisterCode(email) {
+    transporter.sendMail({
+        from: '"SI4EDU" noreply@si4edu.eu',
+        to: email,
+        subject: 'Test subject',
+        text: 'Test text',
+        html: '<h1>Test HTML</h1>'
     });
 }

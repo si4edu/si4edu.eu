@@ -59,48 +59,42 @@ function autorun() {
         }
     };
 
-    let reg_role = 'student';
+    registerCaptcha('register-captcha');
+    registerCaptcha('login-captcha');
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
-        const fullname = document.getElementById('reg-fullname').value; 
-        const email = document.getElementById('reg-email').value; 
-        const password = document.getElementById('reg-password').value; 
-        fetch(
-            '/user/register',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                    fullname: fullname,
-                    role: reg_role
-                })
-            }
-        ).then(res => {
-            console.log(res.status);
-            return res.text()
-        }).then(data => console.log(data));
+        const fullname = document.getElementById('register-fullname').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        let role = 's';
+        if (document.getElementById('buddy-role').checked) {
+            role = 'b';
+        }
+        fetch('/user/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                fullname: fullname,
+                email: email,
+                password: password,
+                role: role
+            })
+        }).then(res => res.text()).then(data => {
+
+        });
     };
-    let s_recaptcha = false;
-    document.getElementById('student-role').onclick = () => reg_role = 'student';
-    document.getElementById('buddy-role').onclick = () => reg_role = 'buddy';
     document.getElementById('login-form').onsubmit = e => {
         e.preventDefault();
-        const email = document.getElementById('log-email').value;
-        const password = document.getElementById('log-password').value;
-        fetch(
-            '/user/login',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                })
-            }
-        ).then(res => {
-            console.log(res.status);
-            return res.text()
-        }).then(data => console.log(data));
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        fetch('/user/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            })
+        }).then(res => res.text()).then(data => {
+
+        });
     };
 }
 
