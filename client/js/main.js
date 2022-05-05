@@ -88,7 +88,6 @@ function autorun() {
         e.preventDefault();
         const email = document.getElementById('log-email').value;
         const password = document.getElementById('log-password').value;
-        let rec = document.getElementById('recaptcha').value;
         fetch(
             '/user/login',
             {
@@ -96,7 +95,6 @@ function autorun() {
                 body: JSON.stringify({
                     email: email,
                     password: password,
-                    captcha: rec
                 })
             }
         ).then(res => {
