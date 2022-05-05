@@ -121,9 +121,6 @@ if (document.addEventListener) {
     };
 }
 
-
-
-
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
         page.style = 'display:none';
