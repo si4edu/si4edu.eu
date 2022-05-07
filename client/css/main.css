@@ -128,7 +128,6 @@ a:active, button:active {
 }
 
 embed('client/css/landing.css');
-embed('client/css/join.css');
 embed('client/css/team.css');
 embed('client/css/about.css');
 embed('client/css/register.css');

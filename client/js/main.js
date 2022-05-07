@@ -1,3 +1,5 @@
+embed('client/js/lang.js');
+
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
         page.style = 'display:none';
@@ -39,6 +41,13 @@ function autorun() {
 
     updatePage(location.pathname);
 
+    if (localStorage.hasOwnProperty('lang')) {
+        setLang(localStorage.lang);
+    }
+    document.getElementById('lang-en-button').onclick = () => { setLang('en'); };
+    document.getElementById('lang-pl-button').onclick = () => { setLang('pl'); };
+    document.getElementById('lang-ua-button').onclick = () => { setLang('ua'); };
+
     fetch('/photos').then(res => res.json()).then(data => {
         for (const photo of data) {
             const img = document.createElement('a');
@@ -59,8 +68,6 @@ function autorun() {
         }
     };
 
-    registerCaptcha('register-captcha');
-    registerCaptcha('login-captcha');
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
         const fullname = document.getElementById('register-fullname').value;
