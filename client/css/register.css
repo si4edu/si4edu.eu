@@ -1,11 +1,11 @@
-#login-box, #register-box {
+#register-box, #login-box {
     width: 100%;
     max-width: 400px;
     margin: 0 50%;
     transform: translateX(-50%);
 }
 
-#login-form, #register-form {
+#register-form, #login-form {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -15,4 +15,8 @@
     padding: 35px 50px;
     border-radius: 20px;
     box-sizing: border-box;
+}
+
+#register-captcha, #login-captcha {
+    margin-top: 5px;
 }

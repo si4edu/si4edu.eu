@@ -41,12 +41,22 @@ function autorun() {
 
     updatePage(location.pathname);
 
-    if (localStorage.hasOwnProperty('lang')) {
+    if (localStorage.hasOwnProperty('lang') && localStorage.lang !== 'en') {
         setLang(localStorage.lang);
     }
     document.getElementById('lang-en-button').onclick = () => { setLang('en'); };
     document.getElementById('lang-pl-button').onclick = () => { setLang('pl'); };
     document.getElementById('lang-ua-button').onclick = () => { setLang('ua'); };
+    
+    const nav = document.querySelector('nav');
+    document.getElementById('mobile-menu').onclick = () => {
+        nav.open = !nav.open;
+        if (nav.open) {
+            nav.setAttribute('open', true);
+        } else {
+            nav.removeAttribute('open');
+        }
+    };
 
     fetch('/photos').then(res => res.json()).then(data => {
         for (const photo of data) {
@@ -57,16 +67,6 @@ function autorun() {
             document.getElementById('instagram-feed').appendChild(img);
         }
     });
-
-    const nav = document.querySelector('nav');
-    document.getElementById('mobile-menu').onclick = () => {
-        nav.open = !nav.open;
-        if (nav.open) {
-            nav.setAttribute('open', true);
-        } else {
-            nav.removeAttribute('open');
-        }
-    };
 
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
