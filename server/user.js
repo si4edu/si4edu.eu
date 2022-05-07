@@ -6,8 +6,8 @@ if (!FS.existsSync('users/emails.json')) {
 if (!FS.existsSync('users/users.json')) {
     FS.writeFileSync('users/users.json', '{}');
 }
-let lookupUsers = JSON.parse(FS.readFileSync('users/users.json'));
-let lookupEmails = JSON.parse(FS.readFileSync('users/emails.json'));
+let users = JSON.parse(FS.readFileSync('users/users.json'));
+let emails = JSON.parse(FS.readFileSync('users/emails.json'));
 
 app.post('/user/register', res => {
     readJson(res, (obj) => {
@@ -19,7 +19,7 @@ app.post('/user/register', res => {
         let token;
         do {
             token = randomBytes(16).toString('hex');
-        } while (lookupUsers.hasOwnProperty(token));
+        } while (users.hasOwnProperty(token));
         const filename = `users/${obj.email}`;
         if (FS.existsSync(filename)) {
             res.writeStatus('405');
@@ -37,8 +37,8 @@ app.post('/user/register', res => {
         };
 
         FS.writeFileSync(filename, JSON.stringify(finalObj));
-        lookupUsers[token] = obj.email;
-        FS.writeFileSync('users/users.json', JSON.stringify(lookupUsers));
+        users[token] = obj.email;
+        FS.writeFileSync('users/users.json', JSON.stringify(users));
         sendRegisterCode(obj.email);
         res.writeStatus('200');
         res.end();
@@ -55,12 +55,12 @@ app.put('/user/update', res => {
             res.end();
             return;
         }
-        if (!lookupUsers.hasOwnProperty(obj.token)) {
+        if (!users.hasOwnProperty(obj.token)) {
             res.writeStatus('404');
             res.end();
             return;
         }
-        const filename = `users/${lookupUsers[obj.token]}`;
+        const filename = `users/${users[obj.token]}`;
         let user = JSON.parse(FS.readFileSync(filename));
         if (user.token !== obj.token) {
             res.writeStatus('401');
@@ -116,9 +116,9 @@ app.post('/user/login', res => {
         let token;
         do {
             token = randomBytes(16).toString('hex');
-        } while (lookupEmails.hasOwnProperty(token));
-        lookupEmails[token] = user.token;
-        FS.writeFileSync('users/emails.json', JSON.stringify(lookupEmails));
+        } while (emails.hasOwnProperty(token));
+        emails[token] = user.token;
+        FS.writeFileSync('users/emails.json', JSON.stringify(emails));
         sendConfirmationCode(user.email, token);
         res.end(user.token);
     }, () => {
@@ -128,13 +128,13 @@ app.post('/user/login', res => {
 });
 
 app.get('/user/confirm', (res, req) => {
-    const tokenHeader = req.getQuery();
-    if (lookupEmails.hasOwnProperty(tokenHeader)) {
-        const email = lookupUsers[lookupEmails[tokenHeader]];
+    const tokenQuery = req.getQuery();
+    if (emails.hasOwnProperty(tokenQuery)) {
+        const email = users[emails[tokenQuery]];
         const user = JSON.parse(FS.readFileSync(`users/${email}`));
         user.confirmed = true;
-        delete lookupEmails[tokenHeader];
-        FS.writeFileSync('users/emails.json', JSON.stringify(lookupEmails));
+        delete emails[tokenQuery];
+        FS.writeFileSync('users/emails.json', JSON.stringify(emails));
         FS.writeFileSync(`users/${email}`, JSON.stringify(user));
         res.writeStatus('200');
     } else {
