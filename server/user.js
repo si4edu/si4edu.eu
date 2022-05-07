@@ -1,5 +1,14 @@
 import { createTransport } from 'nodemailer';
 
+if (!FS.existsSync('users/emails.json')) {
+    FS.writeFileSync('users/emails.json', '{}');
+}
+if (!FS.existsSync('users/users.json')) {
+    FS.writeFileSync('users/users.json', '{}');
+}
+let lookupUsers = JSON.parse(FS.readFileSync('users/users.json'));
+let lookupEmails = JSON.parse(FS.readFileSync('users/emails.json'));
+
 app.post('/user/register', res => {
     readJson(res, (obj) => {
         if (!obj.hasOwnProperty('email') || !obj.hasOwnProperty('password') || !obj.hasOwnProperty('fullname') || !obj.hasOwnProperty('role')) {
@@ -7,14 +16,10 @@ app.post('/user/register', res => {
             res.end();
             return;
         }
-        if (!FS.existsSync('users/users.json')) {
-            FS.writeFileSync('users/users.json', '{}');
-        }
-        let lookup = JSON.parse(FS.readFileSync('users/users.json'));
         let token;
         do {
             token = randomBytes(16).toString('hex');
-        } while (lookup.hasOwnProperty(token));
+        } while (lookupUsers.hasOwnProperty(token));
         const filename = `users/${obj.email}`;
         if (FS.existsSync(filename)) {
             res.writeStatus('405');
@@ -27,11 +32,13 @@ app.post('/user/register', res => {
             password: obj.password,
             fullname: obj.fullname,
             role: obj.role,
-            token: token
+            token: token,
+            confirmed: false
         };
+
         FS.writeFileSync(filename, JSON.stringify(finalObj));
-        lookup[token] = obj.email;
-        FS.writeFileSync('users/users.json', JSON.stringify(lookup));
+        lookupUsers[token] = obj.email;
+        FS.writeFileSync('users/users.json', JSON.stringify(lookupUsers));
         sendRegisterCode(obj.email);
         res.writeStatus('200');
         res.end();
@@ -48,13 +55,12 @@ app.put('/user/update', res => {
             res.end();
             return;
         }
-        const lookup = JSON.parse(FS.readFileSync('users/users.json'));
-        if (!lookup.hasOwnProperty(obj.token)) {
+        if (!lookupUsers.hasOwnProperty(obj.token)) {
             res.writeStatus('404');
             res.end();
             return;
         }
-        const filename = `users/${lookup[obj.token]}`;
+        const filename = `users/${lookupUsers[obj.token]}`;
         let user = JSON.parse(FS.readFileSync(filename));
         if (user.token !== obj.token) {
             res.writeStatus('401');
@@ -107,12 +113,12 @@ app.post('/user/login', res => {
             return;
         }
         res.writeStatus('200');
-        const token = randomBytes(16).toString('hex');
-        if (!FS.existsSync('users/emails.json')) {
-            FS.writeFileSync('users/emails.json', '{}');
-        }
-        let lookup = JSON.parse(FS.readFileSync('users/emails.json'));
-        lookup[token] = user.token;
+        let token;
+        do {
+            token = randomBytes(16).toString('hex');
+        } while (lookupEmails.hasOwnProperty(token));
+        lookupEmails[token] = user.token;
+        FS.writeFileSync('users/emails.json', JSON.stringify(lookupEmails));
         sendConfirmationCode(user.email, token);
         res.end(user.token);
     }, () => {
@@ -122,11 +128,14 @@ app.post('/user/login', res => {
 });
 
 app.get('/user/confirm', (res, req) => {
-    const tokenHeader = req.getHeader('token');
-    const lookup = JSON.parse(FS.readFileSync('users/emails.json'));
-    if (lookup.hasOwnProperty(tokenHeader)) {
-        console.log(lookup[tokenHeader]);
-        delete lookup[tokenHeader];
+    const tokenHeader = req.getQuery();
+    if (lookupEmails.hasOwnProperty(tokenHeader)) {
+        const email = lookupUsers[lookupEmails[tokenHeader]];
+        const user = JSON.parse(FS.readFileSync(`users/${email}`));
+        user.confirmed = true;
+        delete lookupEmails[tokenHeader];
+        FS.writeFileSync('users/emails.json', JSON.stringify(lookupEmails));
+        FS.writeFileSync(`users/${email}`, JSON.stringify(user));
         res.writeStatus('200');
     } else {
         res.writeStatus('403');
@@ -188,7 +197,9 @@ function sendRegisterCode(email) {
 }
 
 function sendConfirmationCode(email, token) {
-    const link = "https://si4edu.eu/user/confirm?token=" + token;
+    // TODO
+    // const link = "https://si4edu.eu/user/confirm?" + token;
+    const link = "localhost:3001/user/confirm?" + token;
     transporter.sendMail({
         from: '"SI4EDU" noreply@si4edu.eu',
         to: email,
