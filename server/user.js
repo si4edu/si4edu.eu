@@ -38,8 +38,14 @@ app.post('/user/register', res => {
 
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         users[token] = obj.email;
+        let authToken;
+        do {
+            authToken = randomBytes(16).toString('hex');
+        } while (emails.hasOwnProperty(token));
+        emails[authToken] = token;
+        FS.writeFileSync('users/emails.json', JSON.stringify(emails));
         FS.writeFileSync('users/users.json', JSON.stringify(users));
-        sendRegisterCode(obj.email);
+        sendConfirmationCode(finalObj.email, authToken);
         res.writeStatus('200');
         res.end();
     }, () => {
@@ -113,13 +119,6 @@ app.post('/user/login', res => {
             return;
         }
         res.writeStatus('200');
-        let token;
-        do {
-            token = randomBytes(16).toString('hex');
-        } while (emails.hasOwnProperty(token));
-        emails[token] = user.token;
-        FS.writeFileSync('users/emails.json', JSON.stringify(emails));
-        sendConfirmationCode(user.email, token);
         res.end(user.token);
     }, () => {
         res.writeStatus('400');
@@ -186,15 +185,6 @@ const transporter = createTransport({
         pass: SECRETS.pass
     }
 });
-function sendRegisterCode(email) {
-    transporter.sendMail({
-        from: '"SI4EDU" noreply@si4edu.eu',
-        to: email,
-        subject: 'Test subject',
-        text: 'Test text',
-        html: '<h1>Test HTML</h1>'
-    });
-}
 
 function sendConfirmationCode(email, token) {
     // TODO
