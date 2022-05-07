@@ -128,12 +128,12 @@ app.post('/user/login', res => {
 });
 
 app.get('/user/confirm', (res, req) => {
-    const tokenQuery = req.getQuery();
-    if (emails.hasOwnProperty(tokenQuery)) {
-        const email = users[emails[tokenQuery]];
+    const token= req.getQuery();
+    if (emails.hasOwnProperty(token)) {
+        const email = users[emails[token]];
         const user = JSON.parse(FS.readFileSync(`users/${email}`));
         user.confirmed = true;
-        delete emails[tokenQuery];
+        delete emails[token];
         FS.writeFileSync('users/emails.json', JSON.stringify(emails));
         FS.writeFileSync(`users/${email}`, JSON.stringify(user));
         res.writeStatus('200');
