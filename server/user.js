@@ -7,10 +7,10 @@ app.post('/user/register', res => {
             res.end();
             return;
         }
-        if (!FS.existsSync('users/lookup.json')) {
-            FS.writeFileSync('users/lookup.json', '{}');
+        if (!FS.existsSync('users/users.json')) {
+            FS.writeFileSync('users/users.json', '{}');
         }
-        let lookup = JSON.parse(FS.readFileSync('users/lookup.json'));
+        let lookup = JSON.parse(FS.readFileSync('users/users.json'));
         let token;
         do {
             token = randomBytes(16).toString('hex');
@@ -31,7 +31,7 @@ app.post('/user/register', res => {
         };
         FS.writeFileSync(filename, JSON.stringify(finalObj));
         lookup[token] = obj.email;
-        FS.writeFileSync('users/lookup.json', JSON.stringify(lookup));
+        FS.writeFileSync('users/users.json', JSON.stringify(lookup));
         sendRegisterCode(obj.email);
         res.writeStatus('200');
         res.end();
@@ -48,7 +48,7 @@ app.put('/user/update', res => {
             res.end();
             return;
         }
-        const lookup = JSON.parse(FS.readFileSync('users/lookup.json'));
+        const lookup = JSON.parse(FS.readFileSync('users/users.json'));
         if (!lookup.hasOwnProperty(obj.token)) {
             res.writeStatus('404');
             res.end();
@@ -107,11 +107,31 @@ app.post('/user/login', res => {
             return;
         }
         res.writeStatus('200');
+        const token = randomBytes(16).toString('hex');
+        if (!FS.existsSync('users/emails.json')) {
+            FS.writeFileSync('users/emails.json', '{}');
+        }
+        let lookup = JSON.parse(FS.readFileSync('users/emails.json'));
+        lookup[token] = user.token;
+        sendConfirmationCode(user.email, token);
         res.end(user.token);
     }, () => {
         res.writeStatus('400');
         res.end();
     });
+});
+
+app.get('/user/confirm', (res, req) => {
+    const tokenHeader = req.getHeader('token');
+    const lookup = JSON.parse(FS.readFileSync('users/emails.json'));
+    if (lookup.hasOwnProperty(tokenHeader)) {
+        console.log(lookup[tokenHeader]);
+        delete lookup[tokenHeader];
+        res.writeStatus('200');
+    } else {
+        res.writeStatus('403');
+    }
+    res.end();
 });
 
 function readJson(res, cb, err) {
@@ -164,5 +184,15 @@ function sendRegisterCode(email) {
         subject: 'Test subject',
         text: 'Test text',
         html: '<h1>Test HTML</h1>'
+    });
+}
+
+function sendConfirmationCode(email, token) {
+    const link = "https://si4edu.eu/user/confirm?token=" + token;
+    transporter.sendMail({
+        from: '"SI4EDU" noreply@si4edu.eu',
+        to: email,
+        subject: 'Welcome to Si4edu!',
+        html: `<a href="${link}">Click here!</a>`
     });
 }
