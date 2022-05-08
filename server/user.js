@@ -8,6 +8,7 @@ const users = JSON.parse(FS.readFileSync('users/users.json'));
 const emails = JSON.parse(FS.readFileSync('users/emails.json'));
 
 app.post('/user/register', res => {
+    res.onAborted(() => {});
     readJson(res, data => {
         if (
             Object.keys(data).length !== 5 ||
@@ -46,8 +47,6 @@ app.post('/user/register', res => {
             res.writeStatus('400'); res.end('0');
         });
         delete data.captcha;
-    }, () => {
-        res.writeStatus('400'); res.end('0');
     });
 });
 
@@ -93,6 +92,7 @@ app.post('/user/register', res => {
 // });
 
 app.post('/user/login', res => {
+    res.onAborted(() => {});
     readJson(res, data => {
         if (
             Object.keys(data).length !== 3 ||
@@ -123,8 +123,6 @@ app.post('/user/login', res => {
             res.writeStatus('400'); res.end('0');
         });
         delete data.captcha;
-    }, () => {
-        res.writeStatus('400'); res.end('0');
     });
 });
 
@@ -157,7 +155,7 @@ function generateToken(obj) {
 }
 
 function checkCaptcha(token, success, error) {
-    https.get(`https://google.com/recaptcha/api/siteverify?secret=6LfVtNMdAAAAAM2P1nhEUQxfDmZuf_A_7HLCEaNh&response=${token}`, response => {
+    https.get(`https://google.com/recaptcha/api/siteverify?secret=${SECRETS.captcha}&response=${token}`, response => {
         let data = '';
         response.on('data', (chunk) => {
             data += chunk;
@@ -170,9 +168,8 @@ function checkCaptcha(token, success, error) {
     }).on('error', () => error());
 }
 
-function readJson(res, success, error) {
+function readJson(res, success) {
     let buffer;
-    res.onAborted(error);
     res.onData((ab, isLast) => {
         let chunk = Buffer.from(ab);
         if (isLast) {
