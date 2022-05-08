@@ -187,11 +187,18 @@ const transporter = createTransport({
 });
 
 function sendConfirmationCode(email, token) {
-    const link = `${URL}/user/confirm?${token}`;
+    const link = `${URL}/user.confirm?${token}`;
     transporter.sendMail({
         from: '"SI4EDU" noreply@si4edu.eu',
         to: email,
-        subject: 'Welcome to Si4edu!',
-        html: `<a href="${link}">Click here!</a>`
+        subject: 'Welcome to SI4EDU',
+        html: emailContent(email, link)
     });
+}
+
+function emailContent(email, link) {
+    let content = FS.readFileSync('email.html').toString();
+    content = content.replace('%NAME%', email);
+    content = content.replaceAll('%LINK%', link);
+    return content;
 }
