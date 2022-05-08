@@ -215,7 +215,7 @@ function sendConfirmationMail(user, token) {
     transporter.sendMail({
         from: '"SI4EDU" noreply@si4edu.eu',
         to: user.email,
-        subject: 'SI4EDU Registration Code',
+        subject: 'SI4EDU Confirm Registration',
         html:
         `<!DOCTYPE html>
         <body style="font-size: 20px;">
