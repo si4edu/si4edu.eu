@@ -22,7 +22,7 @@ langs.ua = {
     'about-link': 'XXXXX',
     'contact-link': 'XXXXX',
     'login-button': 'XXXXX',
-    'landing-header': 'XXXXXX\nXXXXX\nXXXXXX\nXXXXXX',
+    'landing-header': 'XXXXXX\nXXXXXX\nXXXXXX\nXXXXXX',
     'landing-info-header': 'XXXXXX',
     'landing-info-1': 'XXXXXX',
     'landing-info-2': 'XXXXXX',
