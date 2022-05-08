@@ -1,4 +1,6 @@
+embed('client/js/math.js');
 embed('client/js/lang.js');
+embed('client/js/register.js');
 
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
@@ -68,41 +70,7 @@ function autorun() {
         }
     });
 
-    document.getElementById('register-form').onsubmit = e => {
-        e.preventDefault();
-        const fullname = document.getElementById('register-fullname').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        let role = 's';
-        if (document.getElementById('buddy-role').checked) {
-            role = 'b';
-        }
-        fetch('/user/register', {
-            method: 'POST',
-            body: JSON.stringify({
-                fullname: fullname,
-                email: email,
-                password: password,
-                role: role
-            })
-        }).then(res => res.text()).then(data => {
-
-        });
-    };
-    document.getElementById('login-form').onsubmit = e => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        fetch('/user/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            })
-        }).then(res => res.text()).then(data => {
-
-        });
-    };
+    registerAutorun();
 }
 
 function onload() { }

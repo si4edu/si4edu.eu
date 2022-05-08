@@ -12,5 +12,5 @@ assets/instagram
 # Secrets
 secrets.json
 
-# Instagram credentials
-instagram.json
+# User data
+users
