@@ -1,6 +1,6 @@
 #register-box, #login-box {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 50%;
     transform: translateX(-50%);
 }
@@ -27,59 +27,50 @@
     margin-top: 5px;
 }
 
-#gender-list {
-    margin-left: 10px;
+#register-age {
+    margin-right: 5px;
 }
 
-#checkbox-field {
-    display: flex;
+#register-gender {
+    margin-left: 5px;
+}
+
+#register-country {
+    margin-right: 5px;
+}
+
+#register-city {
+    margin-left: 5px;
+}
+
+#register-form hr {
     width: 100%;
+    border-color: var(--color1);
+}
+
+.register-fieldset {
+    border: none;
     margin: 0;
-    padding: 0;
 }
 
-#checkbox-field input {
-    width: 15px;
-    height: auto;
-    margin-top: 2px;
+.register-fieldset > h3 {
+    margin: 5px 0;
 }
 
-#checkbox-field label {
-    margin-left: 15px;
-}
-
-.checkbox-list {
-    width: 100%;
-    /* border: none; */
-    margin: 5px 0 15px;
-}
-
-.checkbox-list ul {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.checkbox-list ul li {
+.register-fieldset > div {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#register-form label {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    float: left;
-    list-style: outside none none;
-    clear: both;
-    margin: 10px 0 0 0;
+    margin-right: 10px;
 }
 
-.checkbox-list ul li input {
-    width: 15px;
-    height: auto;
-    margin: 5px;
-}
-
-.checkbox-list ul li label {
-    margin-left: 15px;
-}
-
-.category {
-    margin: 0;
+#register-form label > input {
+    width: 12px;
+    height: 12px;
+    margin: 0 10px 0 0;
 }

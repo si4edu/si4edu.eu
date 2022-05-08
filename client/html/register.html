@@ -3,108 +3,118 @@
     <h2 style="display: flex; justify-content: center;">Start your adventure with us today</h2>
     <div id="register-box">
         <form id="register-form">
-            <span style="margin-bottom: 10px; font-size: 24px;">I want to become a</span>
-            <div style="display: flex; margin-bottom: 10px; font-size: 18px;">
-                <label style="margin-right: 10px; text-align: center;">
-                    <input id="student-role" type="radio" name="role" value="student" checked>
-                    Student
-                </label>
-                <label style="margin-left: 10px; text-align: center;">
-                    <input id="buddy-role" type="radio" name="role" value="buddy">
-                    Buddy
-                </label>
-            </div>
+            <fieldset class="register-fieldset">
+                <h3>I want to be a</h3>
+                <div>
+                    <label>
+                        <input id="register-role-student" type="radio" name="role" checked>
+                        Student
+                    </label>
+                    <label>
+                        <input id="register-role-buddy" type="radio" name="role">
+                        Buddy
+                    </label>
+                </div>
+            </fieldset>
+            <hr>
             <input id="register-fullname" type="text" placeholder="Full Name" required>
             <input id="register-email" type="email" placeholder="Email" required>
+            <input id="register-password" type="password" placeholder="Password" required>
+            <input id="register-repeat-password" type="password" placeholder="Repeat Password" required>
             <span id="register-error-email" class="form-error" style="display: none;">Account with this email already exists</span>
             <input id="register-school" type="text" placeholder="School" required>
             <div style="display: flex; width: 100%;">
-                <input id="register-age" type="number" placeholder="Age" min="14" max="100" required>
-                <select id="gender-list">
+                <input id="register-age" type="number" placeholder="Age" min="13" max="100" required>
+                <select id="register-gender">
+                    <option disabled selected>Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                 </select>
             </div>
-
-            <h3 class="category">Classes</h3>
-            <fieldset class="checkbox-list">
-                <ul>
-                    <li>
-                        <input id="register-classes-biology" type="checkbox" name="classes-biology">
-                        <label for="classes-biology">Biology</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-mathematics" type="checkbox" name="classes-mathematics">
-                        <label for="classes-mathematics">Mathematics</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-chemistry" type="checkbox" name="classes-chemistry">
-                        <label for="classes-chemistry">Chemistry</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-english" type="checkbox" name="classes-english">
-                        <label for="classes-english">English</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-german" type="checkbox" name="classes-german">
-                        <label for="classes-german">German</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-polish" type="checkbox" name="classes-polish">
-                        <label for="classes-polish">Polish</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-geography" type="checkbox" name="classes-geography">
-                        <label for="classes-geography">Geography</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-physics" type="checkbox" name="classes-physics">
-                        <label for="classes-physics">Physics</label>
-                    </li>
-                    <li>
-                        <input id="register-classes-french" type="checkbox" name="classes-french">
-                        <label for="classes-french">French</label>
-                    </li>
-                </ul>
-            </fieldset>
-            <input id="register-other-classes" type="text" placeholder="Other Classes">
-            <div id="checkbox-field">
-                <input id="register-poland" type="checkbox" name="in-poland">
-                <label for="in-poland">Are you currently in Poland?</label>
+            <div style="display: flex; width: 100%;">
+                <select id="register-country">
+                    <option disabled selected>Coutry</option>
+                    <option value="Poland">Poland</option>
+                    <option value="Ukraine">Ukraine</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input id="register-city" type="text" placeholder="City">
             </div>
-            <input id="register-city" type="text" placeholder="Which city">
-            <fieldset class="checkbox-list">
-                <ul>
-                    <li>
-                        <input id="register-video-communication" type="checkbox" name="video-communication">
-                        <label for="video-communication">Do you have access to video communication?</label>
-                    </li>
-                    <li>
-                        <input id="register-meet" type="checkbox" name="able-to-meet">
-                        <label for="able-to-meet">Are you able to meet with students in person?</label>
-                    </li>
-                </ul>
+            <hr>
+            <fieldset class="register-fieldset">
+                <h3>Subjects</h3>
+                <div>
+                    <label>
+                        <input id="register-subject-biology" type="checkbox">
+                        Biology
+                    </label>
+                    <label>
+                        <input id="register-subject-chemistry" type="checkbox">
+                        Chemistry
+                    </label>
+                    <label>
+                        <input id="register-subject-mathematics" type="checkbox">
+                        Mathematics
+                    </label>
+                    <label>
+                        <input id="register-subject-physics" type="checkbox">
+                        Physics
+                    </label>
+                    <label>
+                        <input id="register-subject-geography" type="checkbox">
+                        Geography
+                    </label>
+                    <label>
+                        <input id="register-subject-polish" type="checkbox">
+                        Polish
+                    </label>
+                    <label>
+                        <input id="register-subject-english" type="checkbox">
+                        English
+                    </label>
+                    <label>
+                        <input id="register-subject-german" type="checkbox">
+                        German
+                    </label>
+                    <label>
+                        <input id="register-subject-french" type="checkbox">
+                        French
+                    </label>
+                </div>
             </fieldset>
-            <h3 class="category">Languages</h3>
-            <fieldset class="checkbox-list">
-                <ul>
-                    <li>
-                        <input id="register-polish" type="checkbox" name="Polish">
-                        <label for="Polish">Polish</label>
-                    </li>
-                    <li>
-                        <input id="register-english" type="checkbox" name="English">
-                        <label for="English">English</label>
-                    </li>
-                    <li>
-                        <input id="register-ukrainian" type="checkbox" name="Ukrainian">
-                        <label for="Ukrainian">Ukrainian</label>
-                    </li>
-                </ul>
+            <hr>
+            <fieldset class="register-fieldset">
+                <h3>Lesson Type</h3>
+                <div>
+                    <label>
+                        <input id="register-type-irl" type="checkbox">
+                        In person
+                    </label>
+                    <label>
+                        <input id="register-type-online" type="checkbox">
+                        Online
+                    </label>
+                </div>
             </fieldset>
-            <input id="register-password" type="password" placeholder="Password" required>
-            <input id="register-repeat-password" type="password" placeholder="Repeat Password" required>
+            <hr>
+            <fieldset class="register-fieldset">
+                <h3>Languages</h3>
+                <div>
+                    <label>
+                        <input id="register-lang-polish" type="checkbox">
+                        Polish
+                    </label>
+                    <label>
+                        <input id="register-lang-english" type="checkbox">
+                        English
+                    </label>
+                    <label>
+                        <input id="register-lang-ukrainian" type="checkbox">
+                        Ukrainian
+                    </label>
+                </div>
+            </fieldset>
             <div id="register-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
             <button class="button" style="margin-top: 20px;" type="submit">Register</button>
         </form>

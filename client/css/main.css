@@ -14,11 +14,12 @@ a {
     transition: all 100ms;
 }
 
-input, textarea, select {
+input, textarea, select, fieldset {
     width: 100%;
-    padding: 12px 20px;
-    border-radius: 10px;
+    padding: 6px 10px;
+    border-radius: 5px;
     margin-bottom: 10px;
+    box-sizing: border-box;
 }
 
 .button {
@@ -41,7 +42,7 @@ nav {
     background: #fff;
     padding: 15px 5%;
     box-sizing: border-box;
-    border-bottom: 3px solid var(--color0);
+    border-bottom: 2px solid var(--color0);
     z-index: 100;
 }
 
