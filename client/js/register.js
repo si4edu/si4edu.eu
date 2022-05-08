@@ -28,7 +28,7 @@ function registerAutorun() {
                 });
             }
         }).then(data => {
-            console.log(data);
+            localStorage.token = data;
         });
     };
     document.getElementById('login-form').onsubmit = e => {
@@ -56,7 +56,7 @@ function registerAutorun() {
                 });
             }
         }).then(data => {
-            console.log(data);
+            localStorage.token = data;
         });
     };
 }

@@ -1,4 +1,5 @@
 import { createTransport } from 'nodemailer';
+import https from 'https';
 
 if (!FS.existsSync('users')) { FS.mkdirSync('users') }
 if (!FS.existsSync('users/emails.json')) { FS.writeFileSync('users/emails.json', '{}'); }
@@ -9,6 +10,7 @@ const emails = JSON.parse(FS.readFileSync('users/emails.json'));
 app.post('/user/register', res => {
     readJson(res, data => {
         if (
+            Object.keys(data).length !== 5 ||
             !data.hasOwnProperty('captcha') ||
             !data.hasOwnProperty('email') ||
             !data.hasOwnProperty('pass') ||
@@ -19,29 +21,31 @@ app.post('/user/register', res => {
             return;
         }
 
-        // check captcha
+        checkCaptcha(data.captcha, () => {
+            const filename = `users/${data.email}`;
+            if (FS.existsSync(filename)) {
+                res.writeStatus('400'); res.end('1');
+                return;
+            }
+    
+            data.token = generateToken(users);
+            data.confirmed = false;
+            FS.writeFileSync(filename, JSON.stringify(data));
+            
+            users[data.token] = data.email;
+            FS.writeFileSync('users/users.json', JSON.stringify(users));
+            
+            const emailToken = generateToken(emails);
+            emails[emailToken] = data.email;
+            sendConfirmationMail(data, emailToken);
+            FS.writeFileSync('users/emails.json', JSON.stringify(emails));
+            
+            res.writeStatus('200');
+            res.end(data.token);
+        }, () => {
+            res.writeStatus('400'); res.end('0');
+        });
         delete data.captcha;
-
-        const filename = `users/${data.email}`;
-        if (FS.existsSync(filename)) {
-            res.writeStatus('400'); res.end('1');
-            return;
-        }
-
-        data.token = generateToken(users);
-        data.confirmed = false;
-        FS.writeFileSync(filename, JSON.stringify(data));
-        
-        users[data.token] = data.email;
-        FS.writeFileSync('users/users.json', JSON.stringify(users));
-        
-        const emailToken = generateToken(emails);
-        emails[emailToken] = data.email;
-        sendConfirmationMail(data, emailToken);
-        FS.writeFileSync('users/emails.json', JSON.stringify(emails));
-        
-        res.writeStatus('200');
-        res.end(data.token);
     }, () => {
         res.writeStatus('400'); res.end('0');
     });
@@ -91,6 +95,7 @@ app.post('/user/register', res => {
 app.post('/user/login', res => {
     readJson(res, data => {
         if (
+            Object.keys(data).length !== 3 ||
             !data.hasOwnProperty('captcha') ||
             !data.hasOwnProperty('email') ||
             !data.hasOwnProperty('pass')
@@ -99,23 +104,25 @@ app.post('/user/login', res => {
             return;
         }
 
-        // check captcha
+        checkCaptcha(data.captcha, () => {
+            const filename = `users/${data.email}`;
+            if (!FS.existsSync(filename)) {
+                res.writeStatus('400'); res.end('1');
+                return;
+            }
+    
+            const user = JSON.parse(FS.readFileSync(filename));
+            if (user.pass !== data.pass) {
+                res.writeStatus('400'); res.end('2');
+                return;
+            }
+    
+            res.writeStatus('200');
+            res.end(user.token);
+        }, () => {
+            res.writeStatus('400'); res.end('0');
+        });
         delete data.captcha;
-
-        const filename = `users/${data.email}`;
-        if (!FS.existsSync(filename)) {
-            res.writeStatus('400'); res.end('1');
-            return;
-        }
-
-        const user = JSON.parse(FS.readFileSync(filename));
-        if (user.pass !== data.pass) {
-            res.writeStatus('400'); res.end('2');
-            return;
-        }
-
-        res.writeStatus('200');
-        res.end(user.token);
     }, () => {
         res.writeStatus('400'); res.end('0');
     });
@@ -149,9 +156,23 @@ function generateToken(obj) {
     return token;
 }
 
-function readJson(res, cb, err) {
+function checkCaptcha(token, success, error) {
+    https.get(`https://google.com/recaptcha/api/siteverify?secret=6LfVtNMdAAAAAM2P1nhEUQxfDmZuf_A_7HLCEaNh&response=${token}`, response => {
+        let data = '';
+        response.on('data', (chunk) => {
+            data += chunk;
+        });
+        response.on('end', () => {
+            if (JSON.parse(data).success) {
+                success();
+            }
+        });
+    }).on('error', () => error());
+}
+
+function readJson(res, success, error) {
     let buffer;
-    res.onAborted(err);
+    res.onAborted(error);
     res.onData((ab, isLast) => {
         let chunk = Buffer.from(ab);
         if (isLast) {
@@ -163,7 +184,7 @@ function readJson(res, cb, err) {
                     res.close();
                     return;
                 }
-                cb(json);
+                success(json);
             } else {
                 try {
                     json = JSON.parse(chunk);
@@ -171,7 +192,7 @@ function readJson(res, cb, err) {
                     res.close();
                     return;
                 }
-                cb(json);
+                success(json);
             }
         } else {
             if (buffer) {
