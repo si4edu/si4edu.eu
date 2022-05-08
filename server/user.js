@@ -19,6 +19,9 @@ app.post('/user/register', res => {
             return;
         }
 
+        // check captcha
+        delete data.captcha;
+
         const filename = `users/${data.email}`;
         if (FS.existsSync(filename)) {
             res.writeStatus('400'); res.end('1');
@@ -33,12 +36,12 @@ app.post('/user/register', res => {
         FS.writeFileSync('users/users.json', JSON.stringify(users));
         
         const emailToken = generateToken(emails);
-        emails[emailToken] = email;
-        sendConfirmationCode(data.email, emailToken);
+        emails[emailToken] = data.email;
+        sendConfirmationMail(data, emailToken);
         FS.writeFileSync('users/emails.json', JSON.stringify(emails));
         
         res.writeStatus('200');
-        res.end(user.token);
+        res.end(data.token);
     }, () => {
         res.writeStatus('400'); res.end('0');
     });
@@ -96,6 +99,9 @@ app.post('/user/login', res => {
             return;
         }
 
+        // check captcha
+        delete data.captcha;
+
         const filename = `users/${data.email}`;
         if (!FS.existsSync(filename)) {
             res.writeStatus('400'); res.end('1');
@@ -116,6 +122,7 @@ app.post('/user/login', res => {
 });
 
 app.get('/user/confirm', (res, req) => {
+    res.onAborted(() => {});
     const token = req.getQuery();
     if (emails.hasOwnProperty(token)) {
         const email = emails[token];
@@ -186,19 +193,26 @@ const transporter = createTransport({
     }
 });
 
-function sendConfirmationCode(email, token) {
-    const link = `${URL}/user.confirm?${token}`;
+function sendConfirmationMail(user, token) {
     transporter.sendMail({
         from: '"SI4EDU" noreply@si4edu.eu',
-        to: email,
-        subject: 'Welcome to SI4EDU',
-        html: emailContent(email, link)
+        to: user.email,
+        subject: 'SI4EDU Registration Code',
+        html:
+        `<!DOCTYPE html>
+        <body style="font-size: 20px;">
+            <div style="margin: 0 auto; width: 60%;">
+                <div>
+                    <img style="width: 90px; height: 60px;" src="https://user-images.githubusercontent.com/31388661/165814956-015c59ac-e7f2-4556-8a58-1d4dc4d3aefc.png" alt="Logo" />
+                    <h1 style="margin: 10px 0; color: #20469B; font-size: 50px;">Welcome to SI4EDU!</h1>
+                </div>
+                <div style="color: #20469B;">
+                    <p style="margin: 30px 0;">Dear ${user.fullname},<br>Complete registration by clicking the button below:</p>
+                    <a style="background-color: #F9E319; color: #000; padding: 15px; margin: 10px 0; border-radius: 20px; font-size: 18px; text-decoration: none;" href="${URL}/user/confirm?${token}">Confirm Email</a></p>
+                    <hr style="margin: 30px 0 10px 0;">
+                    <p style="font-size: 15px;">If you did not request this email, please ignore it.</p>
+                </div>
+            </div>
+        </body>`,
     });
-}
-
-function emailContent(email, link) {
-    let content = FS.readFileSync('email.html').toString();
-    content = content.replace('%NAME%', email);
-    content = content.replaceAll('%LINK%', link);
-    return content;
 }
