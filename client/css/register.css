@@ -17,6 +17,12 @@
     box-sizing: border-box;
 }
 
+.form-error {
+    color: #f33;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
 #register-captcha, #login-captcha {
     margin-top: 5px;
 }

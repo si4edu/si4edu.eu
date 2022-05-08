@@ -155,17 +155,19 @@ function generateToken(obj) {
 }
 
 function checkCaptcha(token, success, error) {
-    https.get(`https://google.com/recaptcha/api/siteverify?secret=${SECRETS.captcha}&response=${token}`, response => {
+    https.get(`https://google.com/recaptcha/api/siteverify?secret=${SECRETS.captcha}&response=${token}`, res => {
         let data = '';
-        response.on('data', (chunk) => {
+        res.on('data', chunk => {
             data += chunk;
         });
-        response.on('end', () => {
+        res.on('end', () => {
             if (JSON.parse(data).success) {
                 success();
+            } else {
+                error();
             }
         });
-    }).on('error', () => error());
+    }).on('error', () => { error(); });
 }
 
 function readJson(res, success) {

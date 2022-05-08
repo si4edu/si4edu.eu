@@ -1,6 +1,7 @@
 function registerAutorun() {
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
+        document.getElementById('register-error-email').style = 'display:none';
         if (!captcha) { return; }
         const fullname = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
@@ -16,12 +17,13 @@ function registerAutorun() {
                 role: role
             })
         }).then(res => {
+            grecaptcha.reset(0);
             if (res.status === 200) {
                 return res.text();
             } else if (res.status === 400) {
                 res.text().then(data => {
                     if (data === '1') {
-                        document.getElementById('register-email-taken').style = "block";
+                        document.getElementById('register-error-email').style = '';
                     }
                 });
             }
@@ -31,6 +33,7 @@ function registerAutorun() {
     };
     document.getElementById('login-form').onsubmit = e => {
         e.preventDefault();
+        document.getElementById('login-error-email').style = document.getElementById('login-error-password').style = 'display:none';
         if (!captcha) { return; }
         const email = document.getElementById('login-email').value;
         const pass = sha256(document.getElementById('login-password').value);
@@ -42,14 +45,15 @@ function registerAutorun() {
                 pass: pass,
             })
         }).then(res => {
+            grecaptcha.reset(1);
             if (res.status === 200) {
                 return res.text();
             } else if (res.status === 400) {
                 res.text().then(data => {
                     if (data === '1') {
-                        document.getElementById('login-invalid-email').style.display = "block";
+                        document.getElementById('login-error-email').style = '';
                     } else if (data === '2') {
-                        document.getElementById('login-invalid-password').style.display = "block";
+                        document.getElementById('login-error-password').style = '';
                     }
                 });
             }
