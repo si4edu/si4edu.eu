@@ -47,3 +47,39 @@
 #checkbox-field label {
     margin-left: 15px;
 }
+
+.checkbox-list {
+    width: 100%;
+    /* border: none; */
+    margin: 5px 0 15px;
+}
+
+.checkbox-list ul {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.checkbox-list ul li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    float: left;
+    list-style: outside none none;
+    clear: both;
+    margin: 10px 0 0 0;
+}
+
+.checkbox-list ul li input {
+    width: 15px;
+    height: auto;
+    margin: 5px;
+}
+
+.checkbox-list ul li label {
+    margin-left: 15px;
+}
+
+.category {
+    margin: 0;
+}
