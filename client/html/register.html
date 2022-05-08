@@ -18,52 +18,91 @@
             <input id="register-email" type="email" placeholder="Email" required>
             <span id="register-error-email" class="form-error" style="display: none;">Account with this email already exists</span>
             <input id="register-school" type="text" placeholder="School" required>
-            <input id="register-age" type="number" placeholder="Age" min="14" max="100" required>
+            <div style="display: flex; width: 100%;">
+                <input id="register-age" type="number" placeholder="Age" min="14" max="100" required>
+                <select id="gender-list">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-            <input id="register-gender" list="gender-list" placeholder="Gender" required>
-            <datalist id="gender-list">
-                <option value="Male">
-                <option value="Female">
-                <option value="Other">
-            </datalist>
-
-            <span>Classes:</span>
+            <h3>Classes</h3>
             <fieldset>
-                <input id="register-classes-biology" type="checkbox" name="classes-biology">
-                <label for="classes-biology">Biology</label>
-                <input id="register-classes-mathematics" type="checkbox" name="classes-mathematics">
-                <label for="classes-mathematics">Mathematics</label>
-                <input id="register-classes-chemistry" type="checkbox" name="classes-chemistry">
-                <label for="classes-chemistry">Chemistry</label>
-                <input id="register-classes-english" type="checkbox" name="classes-english">
-                <label for="classes-english">English</label>
-                <input id="register-classes-german" type="checkbox" name="classes-german">
-                <label for="classes-german">German</label>
-                <input id="register-classes-polish" type="checkbox" name="classes-polish">
-                <label for="classes-polish">Polish</label>
-                <input id="register-classes-geography" type="checkbox" name="classes-geography">
-                <label for="classes-geography">Geography</label>
-                <input id="register-classes-physics" type="checkbox" name="classes-physics">
-                <label for="classes-physics">Physics</label>
-                <input id="register-classes-french" type="checkbox" name="classes-french">
-                <label for="classes-french">French</label>
-                <input id="register-classes-economics" type="checkbox" name="classes-economics">
-                <label for="classes-economics">Economics</label>
+                <ul>
+                    <li>
+                        <input id="register-classes-biology" type="checkbox" name="classes-biology">
+                        <label for="classes-biology">Biology</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-mathematics" type="checkbox" name="classes-mathematics">
+                        <label for="classes-mathematics">Mathematics</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-chemistry" type="checkbox" name="classes-chemistry">
+                        <label for="classes-chemistry">Chemistry</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-english" type="checkbox" name="classes-english">
+                        <label for="classes-english">English</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-german" type="checkbox" name="classes-german">
+                        <label for="classes-german">German</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-polish" type="checkbox" name="classes-polish">
+                        <label for="classes-polish">Polish</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-geography" type="checkbox" name="classes-geography">
+                        <label for="classes-geography">Geography</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-physics" type="checkbox" name="classes-physics">
+                        <label for="classes-physics">Physics</label>
+                    </li>
+                    <li>
+                        <input id="register-classes-french" type="checkbox" name="classes-french">
+                        <label for="classes-french">French</label>
+                    </li>
+                </ul>
             </fieldset>
-            <input id="register-other-classes" type="text" placeholder="Other Classes" required>
-            <input id="register-poland" type="checkbox" name="in-poland">
-            <label for="in-poland">Are you currently in Poland?</label>
-            <input id="register-city" type="text" placeholder="If yes, which city">
-            <input id="register-video-communication" type="checkbox" name="Do you have access to video communication?">
-            <input id="register-meet" type="checkbox" name="Are you able to meet with students in person">
-            <span>Languages:</span>
+            <input id="register-other-classes" type="text" placeholder="Other Classes">
+            <div id="checkbox-field">
+                <input id="register-poland" type="checkbox" name="in-poland">
+                <label for="in-poland">Are you currently in Poland?</label>
+            </div>
+            </fieldset>
+            <input id="register-city" type="text" placeholder="Which city">
             <fieldset>
-                <input id="register-polish" type="checkbox" name="Polish">
-                <label for="Polish">Polish</label>
-                <input id="register-english" type="checkbox" name="English">
-                <label for="English">English</label>
-                <input id="register-ukrainian" type="checkbox" name="Ukrainian">
-                <label for="Ukrainian">Ukrainian</label>
+                <ul>
+                    <li>
+                        <input id="register-video-communication" type="checkbox" name="video-communication">
+                        <label for="video-communication">Do you have access to video communication?</label>
+                    </li>
+                    <li>
+                        <input id="register-meet" type="checkbox" name="able-to-meet">
+                        <label for="able-to-meet">Are you able to meet with students in person?</label>
+                    </li>
+                </ul>
+            </fieldset>
+            <h3>Languages</h3>
+            <fieldset>
+                <ul>
+                    <li>
+                        <input id="register-polish" type="checkbox" name="Polish">
+                        <label for="Polish">Polish</label>
+                    </li>
+                    <li>
+                        <input id="register-english" type="checkbox" name="English">
+                        <label for="English">English</label>
+                    </li>
+                    <li>
+                        <input id="register-ukrainian" type="checkbox" name="Ukrainian">
+                        <label for="Ukrainian">Ukrainian</label>
+                    </li>
+                </ul>
             </fieldset>
             <input id="register-password" type="password" placeholder="Password" required>
             <input type="password" placeholder="Repeat Password" required>

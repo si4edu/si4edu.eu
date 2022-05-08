@@ -26,3 +26,24 @@
 #register-captcha, #login-captcha {
     margin-top: 5px;
 }
+
+#gender-list {
+    margin-left: 10px;
+}
+
+#checkbox-field {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#checkbox-field input {
+    width: 15px;
+    height: auto;
+    margin-top: 2px;
+}
+
+#checkbox-field label {
+    margin-left: 15px;
+}

@@ -14,7 +14,7 @@ a {
     transition: all 100ms;
 }
 
-input, textarea {
+input, textarea, select {
     width: 100%;
     padding: 12px 20px;
     border-radius: 10px;
