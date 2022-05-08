@@ -1,11 +1,19 @@
 function registerAutorun() {
+    const registerPassword = document.getElementById('register-password');
+    const registerRepeatPassword = document.getElementById('register-repeat-password');
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
         document.getElementById('register-error-email').style = 'display:none';
-        if (!captcha) { return; }
         const fullname = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
-        const pass = sha256(document.getElementById('register-password').value);
+        const pass = registerPassword.value;
+        if (pass.length < 6) {
+            registerPassword.setCustomValidity('Password is too short');
+        }
+        if (pass !== registerRepeatPassword.value) {
+            registerRepeatPassword.setCustomValidity('Passwords don\'t match');
+        } 
+        if (!captcha) { return; }
         const role = document.getElementById('buddy-role').checked ? 'b' : 's';
         fetch('/user/register', {
             method: 'POST',
@@ -13,7 +21,7 @@ function registerAutorun() {
                 captcha: captcha,
                 fullname: fullname,
                 email: email,
-                pass: pass,
+                pass: sha256(pass),
                 role: role
             })
         }).then(res => {

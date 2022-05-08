@@ -6,7 +6,7 @@
             <span style="margin-bottom: 10px; font-size: 24px;">I want to become a</span>
             <div style="display: flex; margin-bottom: 10px; font-size: 18px;">
                 <label style="margin-right: 10px;">
-                    <input id="student-role" style="margin-right: 5px;" type="radio" name="role" value="student">
+                    <input id="student-role" style="margin-right: 5px;" type="radio" name="role" value="student" checked>
                     Student
                 </label>
                 <label style="margin-left: 10px;">
@@ -18,7 +18,7 @@
             <input id="register-email" type="email" placeholder="Email" required>
             <span id="register-error-email" class="form-error" style="display: none;">Account with this email already exists</span>
             <input id="register-password" type="password" placeholder="Password" required>
-            <input type="password" placeholder="Repeat Password" required>
+            <input id="register-repeat-password" type="password" placeholder="Repeat Password" required>
             <div id="register-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
             <button class="button" style="margin-top: 20px;" type="submit">Register</button>
         </form>

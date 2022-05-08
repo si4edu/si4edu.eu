@@ -221,7 +221,7 @@ function sendConfirmationMail(user, token) {
         html:
         `<!DOCTYPE html>
         <body style="font-size: 20px;">
-            <div style="margin: 0 auto; width: 60%;">
+            <div style="margin: 0 auto; width: 100%; max-width: 800px">
                 <div>
                     <img style="width: 90px; height: 60px;" src="https://user-images.githubusercontent.com/31388661/165814956-015c59ac-e7f2-4556-8a58-1d4dc4d3aefc.png" alt="Logo" />
                     <h1 style="margin: 10px 0; color: #20469B; font-size: 50px;">Welcome to SI4EDU!</h1>
