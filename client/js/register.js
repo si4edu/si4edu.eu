@@ -7,12 +7,8 @@ function registerAutorun() {
         const fullname = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
         const pass = registerPassword.value;
-        if (pass.length < 6) {
-            registerPassword.setCustomValidity('Password is too short');
-        }
-        if (pass !== registerRepeatPassword.value) {
-            registerRepeatPassword.setCustomValidity('Passwords don\'t match');
-        } 
+        registerPassword.setCustomValidity(pass.length < 6 ? 'Password is too short' : '');
+        registerRepeatPassword.setCustomValidity(pass !== registerRepeatPassword.value ? 'Passwords don\'t match' : '');
         if (!captcha) { return; }
         const role = document.getElementById('buddy-role').checked ? 'b' : 's';
         fetch('/user/register', {
