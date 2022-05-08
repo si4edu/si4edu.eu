@@ -16,6 +16,7 @@
             </div>
             <input id="register-fullname" type="text" placeholder="Full Name" required>
             <input id="register-email" type="email" placeholder="Email" required>
+            <p id="register-email-taken" style="color: red; font-size: 15px; display: none;">Email already taken</p>
             <input id="register-password" type="password" placeholder="Password" required>
             <input type="password" placeholder="Repeat Password" required>
             <div id="register-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
@@ -34,7 +35,9 @@
     <div id="login-box">
         <form id="login-form">
             <input id="login-email" type="email" placeholder="Email" required>
+            <p id="login-invalid-email" style="color: red; font-size: 15px; display: none;">User doesn't exist</p>
             <input id="login-password" type="password" placeholder="Password" required>
+            <p id="login-invalid-password" style="color: red; font-size: 15px; display: none;">Invalid Password</p>
             <div id="login-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
             <button class="button" style="margin-top: 20px;" type="submit">Login</button>
         </form>

@@ -21,9 +21,7 @@ function registerAutorun() {
             } else if (res.status === 400) {
                 res.text().then(data => {
                     if (data === '1') {
-                        console.log('email taken');
-                    } else if (data === '2') {
-                        console.log('bad pass');
+                        document.getElementById('register-email-taken').style = "block";
                     }
                 });
             }
@@ -49,9 +47,9 @@ function registerAutorun() {
             } else if (res.status === 400) {
                 res.text().then(data => {
                     if (data === '1') {
-                        console.log('doesnt exist');
+                        document.getElementById('login-invalid-email').style.display = "block";
                     } else if (data === '2') {
-                        console.log('bad pass');
+                        document.getElementById('login-invalid-password').style.display = "block";
                     }
                 });
             }
