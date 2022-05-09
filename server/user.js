@@ -132,7 +132,6 @@ app.put('/user/update', (res, req) => {
                 !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
                 !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
             ) {
-                console.log('asdasd');
                 res.writeStatus('400'); res.end();
                 return;
             }

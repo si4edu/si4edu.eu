@@ -40,12 +40,12 @@ let langChanged;
 function setLang(lang) {
     localStorage.lang = lang;
     if (!langChanged) {
-        langs.en = {};
+        langs.en = { 'landing-header' : 'STUDENT\nINITIATIVE\nFOR\nEDUCATION' };
     }
     lang = langs[lang];
     for (const id in lang) {
         const text = document.getElementById(id);
-        if (!langChanged) {
+        if (!langChanged && !langs.en.hasOwnProperty(id)) {
             langs.en[id] = text.innerText;
         }
         text.innerText = lang[id];

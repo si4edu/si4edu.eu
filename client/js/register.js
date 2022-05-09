@@ -26,9 +26,9 @@ function registerAutorun() {
                 gender: document.getElementById('register-gender').value,
                 country: document.getElementById('register-country').value,
                 city: document.getElementById('register-city').value,
-                subjects: [],
-                lessons: [],
-                langs: [],
+                subjects: [], // TODO: subjects
+                lessons: [], // TODO: lesson
+                langs: [], // TODO: langs
             }),
         }).then(res => {
             grecaptcha.reset(0);
