@@ -2,6 +2,8 @@ function userAutorun() {
     if (localStorage.token) {
         document.getElementById('login-button').style = 'display:none';
         fetch(`/user/info?${localStorage.token}`, { method: 'GET' }).then(res => res.json()).then(data => {
+            const nameSplit = data.name.split(' ');
+            document.getElementById('user-button').innerText = nameSplit[0][0] + (nameSplit.length > 1 ? nameSplit[1][0] : '');
             document.getElementById('user-name').innerText = data.name;
             document.getElementById('user-role').innerText = data.role === 's' ? 'Student' : 'Buddy';
             document.getElementById('user-school').value = data.school;
@@ -17,6 +19,5 @@ function userAutorun() {
             location.reload();
         });
         document.getElementById('user-button').style.display = 'flex';
-        document.getElementById('user-button').innerText = 'XD';
     }
 }
