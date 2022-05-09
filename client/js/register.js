@@ -1,27 +1,38 @@
 function registerAutorun() {
     const registerPassword = document.getElementById('register-password');
     const registerRepeatPassword = document.getElementById('register-repeat-password');
+    registerPassword.oninput = () => {
+        registerPassword.setCustomValidity(registerPassword.value.length < 6 ? 'Password is too short' : '');
+        registerRepeatPassword.oninput();
+    };
+    registerRepeatPassword.oninput = () => {
+        registerRepeatPassword.setCustomValidity(registerPassword.value !== registerRepeatPassword.value ? 'Passwords don\'t match' : '');
+    };
     document.getElementById('register-form').onsubmit = e => {
         e.preventDefault();
         document.getElementById('register-error-email').style = 'display:none';
-        const fullname = document.getElementById('register-fullname').value;
-        const email = document.getElementById('register-email').value;
-        const pass = registerPassword.value;
-        registerPassword.setCustomValidity(pass.length < 6 ? 'Password is too short' : '');
-        registerRepeatPassword.setCustomValidity(pass !== registerRepeatPassword.value ? 'Passwords don\'t match' : '');
         if (!captcha) { return; }
-        const role = document.getElementById('buddy-role').checked ? 'b' : 's';
+        document.getElementById('register-submit').setAttribute('disabled', true);
         fetch('/user/register', {
             method: 'POST',
             body: JSON.stringify({
                 captcha: captcha,
-                fullname: fullname,
-                email: email,
-                pass: sha256(pass),
-                role: role
+                role: document.getElementById('register-role-buddy').checked ? 'b' : 's',
+                name: document.getElementById('register-fullname').value,
+                email: document.getElementById('register-email').value,
+                pass: sha256(registerPassword.value),
+                school: document.getElementById('register-school').value,
+                age: parseInt(document.getElementById('register-age').value),
+                gender: document.getElementById('register-gender').value,
+                country: document.getElementById('register-country').value,
+                city: document.getElementById('register-city').value,
+                subjects: [],
+                lessons: [],
+                langs: [],
             })
         }).then(res => {
             grecaptcha.reset(0);
+            document.getElementById('register-submit').removeAttribute('disabled');
             if (res.status === 200) {
                 return res.text();
             } else if (res.status === 400) {
@@ -39,17 +50,17 @@ function registerAutorun() {
         e.preventDefault();
         document.getElementById('login-error-email').style = document.getElementById('login-error-password').style = 'display:none';
         if (!captcha) { return; }
-        const email = document.getElementById('login-email').value;
-        const pass = sha256(document.getElementById('login-password').value);
+        document.getElementById('login-submit').setAttribute('disabled', true);
         fetch('/user/login', {
             method: 'POST',
             body: JSON.stringify({
                 captcha: captcha,
-                email: email,
-                pass: pass,
+                email: document.getElementById('login-email').value,
+                pass: sha256(document.getElementById('login-password').value),
             })
         }).then(res => {
             grecaptcha.reset(1);
+            document.getElementById('login-submit').removeAttribute('disabled');
             if (res.status === 200) {
                 return res.text();
             } else if (res.status === 400) {

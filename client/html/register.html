@@ -7,12 +7,12 @@
                 <h3>I want to be a</h3>
                 <div>
                     <label>
-                        <input id="register-role-student" type="radio" name="role" checked>
-                        Student
+                        <input id="register-role-buddy" type="radio" name="role" checked>
+                        Buddy
                     </label>
                     <label>
-                        <input id="register-role-buddy" type="radio" name="role">
-                        Buddy
+                        <input id="register-role-student" type="radio" name="role">
+                        Student
                     </label>
                 </div>
             </fieldset>
@@ -25,21 +25,21 @@
             <input id="register-school" type="text" placeholder="School" required>
             <div style="display: flex; width: 100%;">
                 <input id="register-age" type="number" placeholder="Age" min="13" max="100" required>
-                <select id="register-gender">
-                    <option disabled selected>Gender</option>
+                <select id="register-gender" required>
+                    <option value="" disabled selected>Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                 </select>
             </div>
             <div style="display: flex; width: 100%;">
-                <select id="register-country">
-                    <option disabled selected>Coutry</option>
+                <select id="register-country" required>
+                    <option value="" disabled selected>Country</option>
                     <option value="Poland">Poland</option>
                     <option value="Ukraine">Ukraine</option>
                     <option value="Other">Other</option>
                 </select>
-                <input id="register-city" type="text" placeholder="City">
+                <input id="register-city" type="text" placeholder="City" required>
             </div>
             <hr>
             <fieldset class="register-fieldset">
@@ -116,7 +116,7 @@
                 </div>
             </fieldset>
             <div id="register-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
-            <button class="button" style="margin-top: 20px;" type="submit">Register</button>
+            <button id="register-submit" class="button" style="margin-top: 20px;" type="submit">Register</button>
         </form>
         <hr style="margin: 20px 0;">
         <div style="display: flex; justify-content: center; align-items: center;">
@@ -135,7 +135,7 @@
             <input id="login-password" type="password" placeholder="Password" required>
             <span id="login-error-password" class="form-error" style="display: none;">Invalid password</span>
             <div id="login-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
-            <button class="button" style="margin-top: 20px;" type="submit">Login</button>
+            <button id="login-submit" class="button" style="margin-top: 20px;" type="submit">Login</button>
         </form>
         <hr style="margin: 20px 0;">
         <div style="display: flex; justify-content: center; align-items: center;">

@@ -11,12 +11,20 @@ app.post('/user/register', res => {
     res.onAborted(() => {});
     readJson(res, data => {
         if (
-            Object.keys(data).length !== 5 ||
-            !data.hasOwnProperty('captcha') ||
-            !data.hasOwnProperty('email') ||
-            !data.hasOwnProperty('pass') ||
-            !data.hasOwnProperty('fullname') ||
-            !data.hasOwnProperty('role')
+            Object.keys(data).length !== 13 ||
+            !data.hasOwnProperty('captcha') || typeof data.captcha !== 'string' ||
+            !data.hasOwnProperty('role') || typeof data.role !== 'string' ||
+            !data.hasOwnProperty('name') || typeof data.name !== 'string' ||
+            !data.hasOwnProperty('email') || typeof data.email !== 'string' ||
+            !data.hasOwnProperty('pass') || typeof data.pass !== 'string' ||
+            !data.hasOwnProperty('school') || typeof data.school !== 'string' ||
+            !data.hasOwnProperty('age') || !Number.isInteger(data.age) ||
+            !data.hasOwnProperty('gender') || typeof data.gender !== 'string' ||
+            !data.hasOwnProperty('country') || typeof data.country !== 'string' ||
+            !data.hasOwnProperty('city') || typeof data.city !== 'string' ||
+            !data.hasOwnProperty('subjects') || !Array.isArray(data.subjects) ||
+            !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
+            !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
         ) {
             res.writeStatus('400'); res.end('0');
             return;
@@ -227,7 +235,7 @@ function sendConfirmationMail(user, token) {
                     <h1 style="margin: 10px 0; color: #20469B; font-size: 50px;">Welcome to SI4EDU!</h1>
                 </div>
                 <div style="color: #20469B;">
-                    <p style="margin: 30px 0;">Dear ${user.fullname},<br>Complete registration by clicking the button below:</p>
+                    <p style="margin: 30px 0;">Dear ${user.name},<br>Complete registration by clicking the button below:</p>
                     <a style="background-color: #F9E319; color: #000; padding: 15px; margin: 10px 0; border-radius: 20px; font-size: 18px; text-decoration: none;" href="${URL}/user/confirm?${token}">Confirm Email</a></p>
                     <hr style="margin: 30px 0 10px 0;">
                     <p style="font-size: 15px;">If you did not request this email, please ignore it.</p>
