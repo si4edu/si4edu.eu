@@ -8,7 +8,7 @@ const users = JSON.parse(FS.readFileSync('users/users.json'));
 const emails = JSON.parse(FS.readFileSync('users/emails.json'));
 
 app.post('/user/register', res => {
-    res.onAborted(() => {});
+    res.onAborted(() => { });
     readJson(res, data => {
         if (
             Object.keys(data).length !== 13 ||
@@ -26,79 +26,38 @@ app.post('/user/register', res => {
             !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
             !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
         ) {
-            res.writeStatus('400'); res.end('0');
+            res.writeStatus('400'); res.end();
             return;
         }
 
         checkCaptcha(data.captcha, () => {
-            const filename = `users/${data.email}`;
-            if (FS.existsSync(filename)) {
+            if (FS.existsSync(`users/${data.email}`)) {
                 res.writeStatus('400'); res.end('1');
                 return;
             }
-    
+
             data.token = generateToken(users);
             data.confirmed = false;
-            FS.writeFileSync(filename, JSON.stringify(data));
-            
+            FS.writeFileSync(`users/${data.email}`, JSON.stringify(data));
+
             users[data.token] = data.email;
             FS.writeFileSync('users/users.json', JSON.stringify(users));
-            
+
             const emailToken = generateToken(emails);
             emails[emailToken] = data.email;
             sendConfirmationMail(data, emailToken);
             FS.writeFileSync('users/emails.json', JSON.stringify(emails));
-            
+
             res.end(data.token);
         }, () => {
-            res.writeStatus('400'); res.end('0');
+            res.writeStatus('400'); res.end();
         });
         delete data.captcha;
     });
 });
 
-// app.put('/user/update', res => {
-//     readJson(res, obj => {
-//         if (!obj.hasOwnProperty('token')) {
-//             res.writeStatus('400');
-//             res.end();
-//             return;
-//         }
-//         if (!users.hasOwnProperty(obj.token)) {
-//             res.writeStatus('404');
-//             res.end();
-//             return;
-//         }
-//         const filename = `users/${users[obj.token]}`;
-//         let user = JSON.parse(FS.readFileSync(filename));
-//         if (user.token !== obj.token) {
-//             res.writeStatus('401');
-//             res.end();
-//             return;
-//         }
-//         if (obj.hasOwnProperty('password')) {
-//             obj.password = createHash('sha256').update(Buffer.from(obj.password)).digest('hex');
-//         }
-//         let fullname = user.fullname;
-//         if (obj.hasOwnProperty('fullname')) {
-//             fullname = obj.fullname;
-//         }
-//         const finalObj = {
-//             email: user.email,
-//             password: obj.password,
-//             fullname: fullname,
-//             token: user.token
-//         };
-//         FS.writeFileSync(filename, JSON.stringify(finalObj));
-//         res.end();
-//     }, () => {
-//         res.writeStatus('400');
-//         res.end();
-//     });
-// });
-
 app.post('/user/login', res => {
-    res.onAborted(() => {});
+    res.onAborted(() => { });
     readJson(res, data => {
         if (
             Object.keys(data).length !== 3 ||
@@ -106,43 +65,42 @@ app.post('/user/login', res => {
             !data.hasOwnProperty('email') ||
             !data.hasOwnProperty('pass')
         ) {
-            res.writeStatus('400'); res.end('0');
+            res.writeStatus('400'); res.end();
             return;
         }
 
         checkCaptcha(data.captcha, () => {
-            const filename = `users/${data.email}`;
-            if (!FS.existsSync(filename)) {
+            if (!FS.existsSync(`users/${data.email}`)) {
                 res.writeStatus('400'); res.end('1');
                 return;
             }
-    
-            const user = JSON.parse(FS.readFileSync(filename));
+
+            const user = JSON.parse(FS.readFileSync(`users/${data.email}`));
             if (user.pass !== data.pass) {
                 res.writeStatus('400'); res.end('2');
                 return;
             }
-    
+
             res.end(user.token);
         }, () => {
-            res.writeStatus('400'); res.end('0');
+            res.writeStatus('400'); res.end();
         });
         delete data.captcha;
     });
 });
 
 app.get('/user/confirm', (res, req) => {
-    res.onAborted(() => {});
+    res.onAborted(() => { });
     const token = req.getQuery();
     if (emails.hasOwnProperty(token)) {
         const email = emails[token];
         delete emails[token];
         FS.writeFileSync('users/emails.json', JSON.stringify(emails));
-        
+
         const user = JSON.parse(FS.readFileSync(`users/${email}`));
         user.confirmed = true;
         FS.writeFileSync(`users/${email}`, JSON.stringify(user));
-        
+
         res.writeStatus('302');
         res.writeHeader('Location', `/?${user.token}`);
     } else {
@@ -152,13 +110,47 @@ app.get('/user/confirm', (res, req) => {
 });
 
 app.get('/user/info', (res, req) => {
-    res.onAborted(() => {});
+    res.onAborted(() => { });
     const token = req.getQuery();
     if (users.hasOwnProperty(token)) {
         res.end(FS.readFileSync(`users/${users[token]}`));
     } else {
-        res.writeStatus('400');
-        res.end();
+        res.writeStatus('400'); res.end();
+    }
+});
+
+app.put('/user/update', (res, req) => {
+    res.onAborted(() => { });
+    const token = req.getQuery();
+    if (users.hasOwnProperty(token)) {
+        readJson(res, data => {
+            if (
+                Object.keys(data).length !== 5 ||
+                !data.hasOwnProperty('school') || typeof data.school !== 'string' ||
+                !data.hasOwnProperty('city') || typeof data.city !== 'string' ||
+                !data.hasOwnProperty('subjects') || !Array.isArray(data.subjects) ||
+                !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
+                !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
+            ) {
+                console.log('asdasd');
+                res.writeStatus('400'); res.end();
+                return;
+            }
+
+            const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
+            user.school = data.school;
+            user.city = data.city;
+            user.subjects = data.subjects;
+            user.lessons = data.lessons;
+            user.langs = data.langs;
+            FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
+            
+            res.end();
+        }, () => {
+            res.writeStatus('400'); res.end();
+        });
+    } else {
+        res.writeStatus('400'); res.end();
     }
 });
 
@@ -235,7 +227,7 @@ function sendConfirmationMail(user, token) {
         to: user.email,
         subject: 'SI4EDU Confirm Registration',
         html:
-        `<!DOCTYPE html>
+            `<!DOCTYPE html>
         <body style="font-size: 20px;">
             <div style="margin: 0 auto; width: 100%; max-width: 800px">
                 <div>

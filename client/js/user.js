@@ -20,4 +20,21 @@ function userAutorun() {
         });
         document.getElementById('user-button').style.display = 'flex';
     }
+
+    document.getElementById('user-form').onsubmit = e => {
+        e.preventDefault();
+        document.getElementById('user-submit').setAttribute('disabled', true);
+        fetch(`/user/update?${localStorage.token}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                school: document.getElementById('user-school').value,
+                city: document.getElementById('user-city').value,
+                subjects: [],
+                lessons: [],
+                langs: [],
+            }),
+        }).then(() => {
+            document.getElementById('user-submit').removeAttribute('disabled');
+        });
+    };
 }

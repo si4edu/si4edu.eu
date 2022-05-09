@@ -3,10 +3,10 @@
     <h2 id="user-role" style="display: flex; justify-content: center;"></h2>
     <div id="user-box">
         <form id="user-form">
-            <input id="user-school" type="text" placeholder="School">
+            <input id="user-school" type="text" placeholder="School" required>
             <div style="display: flex; width: 100%;">
                 <input id="user-age" type="number" placeholder="Age" min="13" max="100" disabled>
-                <select id="register-gender" disabled>
+                <select id="user-gender" disabled>
                     <option value="" disabled selected>Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -20,7 +20,7 @@
                     <option value="ua">Ukraine</option>
                     <option value="other">Other</option>
                 </select>
-                <input id="user-city" type="text" placeholder="City">
+                <input id="user-city" type="text" placeholder="City" required>
             </div>
             <fieldset class="user-fieldset">
                 <h3>Subjects</h3>
@@ -93,7 +93,7 @@
                     </label>
                 </div>
             </fieldset>
-            <button type="submit" class="button">Save</button>
+            <button id="user-submit" type="submit" class="button">Save</button>
         </form>
     </div>
 </div>

@@ -29,7 +29,7 @@ function registerAutorun() {
                 subjects: [],
                 lessons: [],
                 langs: [],
-            })
+            }),
         }).then(res => {
             grecaptcha.reset(0);
             document.getElementById('register-submit').removeAttribute('disabled');
@@ -57,7 +57,7 @@ function registerAutorun() {
                 captcha: captcha,
                 email: document.getElementById('login-email').value,
                 pass: sha256(document.getElementById('login-password').value),
-            })
+            }),
         }).then(res => {
             grecaptcha.reset(1);
             document.getElementById('login-submit').removeAttribute('disabled');
