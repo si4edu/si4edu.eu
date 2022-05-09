@@ -3,6 +3,7 @@ embed('client/js/lang.js');
 embed('client/js/register.js');
 embed('client/js/user.js');
 embed('client/js/schedule.js');
+embed('client/js/matches.js');
 
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
