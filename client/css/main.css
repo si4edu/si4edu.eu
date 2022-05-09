@@ -132,6 +132,7 @@ embed('client/css/landing.css');
 embed('client/css/team.css');
 embed('client/css/about.css');
 embed('client/css/register.css');
+embed('client/css/user.css');
 
 #footer-mail:hover {
     color: var(--color1) !important;

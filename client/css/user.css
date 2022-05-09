@@ -1,0 +1,26 @@
+.user-fieldset div {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.user-fieldset div label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.user-fieldset div label input {
+    width: 12px;
+    height: 12px;
+    margin: 0 10px 0 0;
+}
+
+#user-country {
+    margin-right: 5px;
+}
+
+#user-city {
+    margin-left: 5px;
+}
