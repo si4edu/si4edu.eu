@@ -23,6 +23,10 @@ function updatePage(href) {
     page.style = '';
 
     if (href != '/') {
+        if (href === '/user' && !localStorage.token) {
+            updatePage('/');
+            return;
+        }
         document.querySelector(`[href="/${path[1]}"]`)?.classList.add('page-link-active');
     }
 }
