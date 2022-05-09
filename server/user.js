@@ -49,7 +49,6 @@ app.post('/user/register', res => {
             sendConfirmationMail(data, emailToken);
             FS.writeFileSync('users/emails.json', JSON.stringify(emails));
             
-            res.writeStatus('200');
             res.end(data.token);
         }, () => {
             res.writeStatus('400'); res.end('0');
@@ -91,7 +90,6 @@ app.post('/user/register', res => {
 //             token: user.token
 //         };
 //         FS.writeFileSync(filename, JSON.stringify(finalObj));
-//         res.writeStatus('200');
 //         res.end();
 //     }, () => {
 //         res.writeStatus('400');
@@ -125,7 +123,6 @@ app.post('/user/login', res => {
                 return;
             }
     
-            res.writeStatus('200');
             res.end(user.token);
         }, () => {
             res.writeStatus('400'); res.end('0');
@@ -151,6 +148,17 @@ app.get('/user/confirm', (res, req) => {
     } else {
         res.writeStatus('400');
         res.end(html);
+    }
+});
+
+app.get('/user/info', (res, req) => {
+    res.onAborted(() => {});
+    const token = req.getQuery();
+    if (users.hasOwnProperty(token)) {
+        res.end(FS.readFileSync(`users/${users[token]}`));
+    } else {
+        res.writeStatus('400');
+        res.end();
     }
 });
 

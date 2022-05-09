@@ -1,23 +1,27 @@
 <div id="user" class="page" style="display: none;">
-    <div id="user-update" class="user-box">
-        <h1>Dashboard</h1>
-
-        <form class="user-form">
-            <input id="user-fullname" type="text" placeholder="Fullname" disabled>
-            <input id="user-email" type="text" placeholder="email" disabled>
-            <input id="user-password" type="password" placeholder="New Password">
+    <h1 id="user-name" style="display: flex; justify-content: center;"></h1>
+    <h2 id="user-role" style="display: flex; justify-content: center;"></h2>
+    <div id="user-box">
+        <form id="user-form">
+            <input id="user-school" type="text" placeholder="School">
             <div style="display: flex; width: 100%;">
-                <select id="user-country">
-                    <option id="user-def-country" value="Poland" selected>Poland</option>
-                    <option id="user-sec-country" value="Ukraine">Ukraine</option>
-                    <option value="Other">Other</option>
+                <input id="user-age" type="number" placeholder="Age" min="13" max="100" disabled>
+                <select id="register-gender" disabled>
+                    <option value="" disabled selected>Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div style="display: flex; width: 100%;">
+                <select id="user-country" disabled>
+                    <option value="" disabled selected>Country</option>
+                    <option value="pl">Poland</option>
+                    <option value="ua">Ukraine</option>
+                    <option value="other">Other</option>
                 </select>
                 <input id="user-city" type="text" placeholder="City">
             </div>
-            <select id="user-gender" disabled>
-                <option id="user-def-gender" selected>Gender</option>
-            </select>
-            <input id="user-school" type="text" placeholder="School">
             <fieldset class="user-fieldset">
                 <h3>Subjects</h3>
                 <div>

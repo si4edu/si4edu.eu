@@ -17,8 +17,8 @@ function registerAutorun() {
             method: 'POST',
             body: JSON.stringify({
                 captcha: captcha,
-                role: document.getElementById('register-role-buddy').checked ? 'b' : 's',
-                name: document.getElementById('register-fullname').value,
+                role: document.getElementById('register-role-student').checked ? 's' : 'b',
+                name: document.getElementById('register-name').value,
                 email: document.getElementById('register-email').value,
                 pass: sha256(registerPassword.value),
                 school: document.getElementById('register-school').value,

@@ -23,26 +23,6 @@
     margin-bottom: 20px;
 }
 
-#register-captcha, #login-captcha {
-    margin-top: 5px;
-}
-
-#register-age {
-    margin-right: 5px;
-}
-
-#register-gender {
-    margin-left: 5px;
-}
-
-#register-country {
-    margin-right: 5px;
-}
-
-#register-city {
-    margin-left: 5px;
-}
-
 #register-form hr {
     width: 100%;
     border-color: var(--color1);
@@ -73,4 +53,16 @@
     width: 12px;
     height: 12px;
     margin: 0 10px 0 0;
+}
+
+#register-captcha, #login-captcha {
+    margin-top: 5px;
+}
+
+#register-age, #register-country {
+    margin-right: 5px;
+}
+
+#register-gender, #register-city {
+    margin-left: 5px;
 }

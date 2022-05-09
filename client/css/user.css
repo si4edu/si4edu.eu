@@ -1,26 +1,36 @@
-.user-fieldset div {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+#user-box {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 50%;
+    transform: translateX(-50%);
 }
 
-.user-fieldset div label {
+.user-fieldset > h3 {
+    margin: 5px 0;
+}
+
+.user-fieldset > div {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#user-form label {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 10px;
 }
 
-.user-fieldset div label input {
+#user-form label > input {
     width: 12px;
     height: 12px;
     margin: 0 10px 0 0;
 }
 
-#user-country {
+#user-age, #user-country {
     margin-right: 5px;
 }
 
-#user-city {
+#user-gender, #user-city {
     margin-left: 5px;
 }

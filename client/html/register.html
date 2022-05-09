@@ -7,17 +7,17 @@
                 <h3>I want to be a</h3>
                 <div>
                     <label>
-                        <input id="register-role-buddy" type="radio" name="role" checked>
-                        Buddy
-                    </label>
-                    <label>
                         <input id="register-role-student" type="radio" name="role">
                         Student
+                    </label>
+                    <label>
+                        <input id="register-role-buddy" type="radio" name="role" checked>
+                        Buddy
                     </label>
                 </div>
             </fieldset>
             <hr>
-            <input id="register-fullname" type="text" placeholder="Full Name" required>
+            <input id="register-name" type="text" placeholder="Full Name" required>
             <input id="register-email" type="email" placeholder="Email" required>
             <input id="register-password" type="password" placeholder="Password" required>
             <input id="register-repeat-password" type="password" placeholder="Repeat Password" required>
@@ -27,17 +27,17 @@
                 <input id="register-age" type="number" placeholder="Age" min="13" max="100" required>
                 <select id="register-gender" required>
                     <option value="" disabled selected>Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
             <div style="display: flex; width: 100%;">
                 <select id="register-country" required>
                     <option value="" disabled selected>Country</option>
-                    <option value="Poland">Poland</option>
-                    <option value="Ukraine">Ukraine</option>
-                    <option value="Other">Other</option>
+                    <option value="pl">Poland</option>
+                    <option value="ua">Ukraine</option>
+                    <option value="other">Other</option>
                 </select>
                 <input id="register-city" type="text" placeholder="City" required>
             </div>

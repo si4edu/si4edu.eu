@@ -1,6 +1,7 @@
 embed('client/js/math.js');
 embed('client/js/lang.js');
 embed('client/js/register.js');
+embed('client/js/user.js');
 
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
@@ -71,6 +72,7 @@ function autorun() {
     });
 
     registerAutorun();
+    userAutorun();
 }
 
 function onload() { }
