@@ -1,23 +1,33 @@
 class Rectangle {
     id;
     studentEmail;
+    buddyEmail;
     lesson;
     subject;
     startTime;
     endTime;
-    date;
+    weekday;
     x;
     y;
     width;
     height;
     element;
+    color;
 
-    constructor(id, lesson, startTime, endTime, date) {
+    constructor(id, lesson, startTime, endTime, weekday, color) {
         this.id = "rect-id-" + id;
         this.lesson = lesson;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.date = date;
+        this.weekday = weekday;
+        this.color = color
+        const yStartAxis = document.getElementById(`hour-${Math.floor(this.startTime)}`).getBoundingClientRect();
+        const yEndAxis = document.getElementById(`hour-${Math.floor(this.endTime)}`).getBoundingClientRect();
+        const xAxis = document.getElementById(`h-${this.weekday}`).getBoundingClientRect();
+        this.x = xAxis.x;
+        this.y = yStartAxis.y;
+        this.width = xAxis.right - xAxis.left;
+        this.height = yEndAxis.y - yStartAxis.y;
     }
 
     draw() {
@@ -25,24 +35,17 @@ class Rectangle {
         this.element.appendChild(document.createTextNode(this.lesson));
         this.element.id = this.id;
         this.element.className = 'rectangle';
-        this.element.style.left = `${this.date.getUTCDay() * 187.5 - 10}px`;
-        this.element.style.height = `${this.height}px`;
+        this.element.style.left = `${this.weekday * 187.5 - 10}px`;
+        this.element.style.top = `${(this.startTime-Math.floor(this.startTime))*100}px`;
+        this.element.style.height = `${(this.height - ((this.startTime-Math.floor(this.startTime))*100)) + (this.endTime - Math.floor(this.endTime))*100}px`;
+        this.element.style.background = this.color;
         document.getElementById(`hour-${Math.floor(this.startTime)}`).appendChild(this.element);
     }
 }
 
-let r;
-let weekday;
-
 window.onload = () => {
-    r = new Rectangle(0, 'Mathematics', '13.0', '21.0', new Date());
-    weekday = r.date.getUTCDay();
-    const yStartAxis = document.getElementById(`hour-${Math.floor(r.startTime)}`).getBoundingClientRect();
-    const yEndAxis = document.getElementById(`hour-${Math.floor(r.endTime)}`).getBoundingClientRect();
-    const xAxis = document.getElementById(`h-${weekday}`).getBoundingClientRect();
-    r.x = xAxis.x;
-    r.y = yStartAxis.y;
-    r.width = xAxis.right - xAxis.left;
-    r.height = yEndAxis.y - yStartAxis.y;
-    r.draw();
+    const r1 = new Rectangle(0, 'Mathematics', '13.3', '15.0', 2);
+    const r2 = new Rectangle(1, 'Geography', '6.15', '7.45', 4, "red");
+    r1.draw();
+    r2.draw();
 }
