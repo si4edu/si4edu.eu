@@ -133,6 +133,7 @@ embed('client/css/team.css');
 embed('client/css/about.css');
 embed('client/css/register.css');
 embed('client/css/user.css');
+embed('client/css/schedule.css');
 
 #footer-mail:hover {
     color: var(--color1) !important;
