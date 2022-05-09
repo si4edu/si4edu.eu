@@ -19,5 +19,7 @@ function userAutorun() {
             location.reload();
         });
         document.getElementById('user-button').style.display = 'flex';
+    } else {
+        updatePage('/');
     }
 }
