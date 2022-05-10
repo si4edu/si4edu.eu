@@ -1,3 +1,24 @@
+userSubjects = [
+    'biology',
+    'chemistry',
+    'mathematics',
+    'physics',
+    'geography',
+    'polish',
+    'english',
+    'german',
+    'french',
+];
+userLessons = [
+    'irl',
+    'online',
+];
+userLangs = [
+    'polish',
+    'english',
+    'ukrainian',
+];
+
 function registerAutorun() {
     const registerPassword = document.getElementById('register-password');
     const registerRepeatPassword = document.getElementById('register-repeat-password');
@@ -26,9 +47,9 @@ function registerAutorun() {
                 gender: document.getElementById('register-gender').value,
                 country: document.getElementById('register-country').value,
                 city: document.getElementById('register-city').value,
-                subjects: [], // TODO: subjects
-                lessons: [], // TODO: lesson
-                langs: [], // TODO: langs
+                subjects: userSubjects.filter(s => document.getElementById(`register-subject-${s}`).checked),
+                lessons: userLessons.filter(l => document.getElementById(`register-lesson-${l}`).checked),
+                langs: userLangs.filter(l => document.getElementById(`register-lang-${l}`).checked),
             }),
         }).then(res => {
             grecaptcha.reset(0);

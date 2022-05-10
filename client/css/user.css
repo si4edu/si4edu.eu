@@ -2,7 +2,7 @@
     width: 100%;
     max-width: 800px;
     margin: 0 50%;
-    transform: translateX(-50%);
+    transform: translateX(calc(100px - 50%));
 }
 
 .user-fieldset > h3 {
