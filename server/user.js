@@ -153,6 +153,31 @@ app.put('/user/update', (res, req) => {
     }
 });
 
+
+// app.get('/user/schedule', (res, req) => {
+//     res.onAborted(() => { });
+//     const token = req.getQuery();
+//     if (users.hasOwnProperty(token)) {
+//         const email = users(token);
+//         const user = JSON.parse(FS.readFileSync(`users/${email}`));
+
+//         // schedule: [
+//         //     {
+//         //         //TODO change to date
+//         //         day: 1,
+//         //         startTime: 6.30,
+//         //         endTime: 8.30,
+//         //         lesson: 'Mathematics',
+//         //         subject: 'Some subject',
+//         //         buddyEmail: 'some@mail.com'
+//         //     }
+//         // ]
+//     } else {
+//         res.writeStatus('400');
+//         res.end(html);
+//     }
+// });
+
 function generateToken(obj) {
     let token;
     do {

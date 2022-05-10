@@ -26,11 +26,11 @@ class Match {
     }
 }
 
-window.onload = () => {
-    const m1 = new Match('Someone Someone', ['Mathematics', 'Geography', 'Polish']);
-    m1.draw();
-    const m2 = new Match('Someone Different', ['French', 'German', 'Geography', 'Polish']);
-    m2.draw();
-    const m3 = new Match('Third Person', ['Chemistry', 'English', 'Mathematics', 'Geography', 'Polish']);
-    m3.draw();
-}
+// window.onload = () => {
+//     const m1 = new Match('Someone Someone', ['Mathematics', 'Geography', 'Polish']);
+//     m1.draw();
+//     const m2 = new Match('Someone Different', ['French', 'German', 'Geography', 'Polish']);
+//     m2.draw();
+//     const m3 = new Match('Third Person', ['Chemistry', 'English', 'Mathematics', 'Geography', 'Polish']);
+//     m3.draw();
+// }

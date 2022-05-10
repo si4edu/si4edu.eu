@@ -3,12 +3,14 @@
     border-spacing: 0px;
     max-height: 850px;
     width: 1500px;
+    overflow: visible;
 }
 
 #schedule-table tr th {
     padding: 10px;
     width: 187.5px;
     height: 50px;
+    overflow: visible;
 }
 
 #schedule-table tr td {
@@ -18,6 +20,7 @@
     height: 50px;
     width: 187.5px;
     position: relative;
+    overflow: visible;
 }
 
 .rectangle {
@@ -25,4 +28,6 @@
     position: absolute;
     width: 182.5px;
     margin: 0 5px;
+    white-space: pre-line;
+    z-index: 10;
 }
