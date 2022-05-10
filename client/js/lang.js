@@ -60,7 +60,6 @@ langs.ua = {
     'team-deski-text': 'XXXXX',
     'team-idk': 'XXXXX',
     'team-idk-text': 'XXXXX',
-    'team-hangar': 'XXXXX',
     'team-hangar-text': 'XXXXX',
     'team-megraf': 'XXXXX',
     'team-megraf-text': 'XXXXX',
