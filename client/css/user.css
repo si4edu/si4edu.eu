@@ -1,36 +1,214 @@
-#user-box {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 50%;
-    transform: translateX(calc(100px - 50%));
+:root {
+    --user-nav-width: 80px;
 }
 
-.user-fieldset > h3 {
+#user-nav {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 160px;
+    height: 100%;
+    position: fixed;
+    top: 92px;
+    left: 0;
+    padding-top: 10px;
+    border-right: 2px solid var(--color0);
+}
+
+.user-link {
+    color: var(--color0);
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.user-link.page-link-active {
+    text-decoration: underline;
+}
+
+#profile, #schedule, #matches {
+    width: calc(100% - var(--user-nav-width));
+    margin: 0 50%;
+    transform: translateX(calc(var(--user-nav-width) - 50%));
+}
+
+#profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+}
+
+#profile-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-fieldset > h3 {
     margin: 5px 0;
 }
 
-.user-fieldset > div {
+.profile-fieldset > div {
     display: flex;
     flex-wrap: wrap;
 }
 
-#user-form label {
+#profile-form label {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 10px;
 }
 
-#user-form label > input {
+#profile-form label > input {
     width: 12px;
     height: 12px;
     margin: 0 10px 0 0;
 }
 
-#user-age, #user-country {
+#profile-age, #profile-country {
     margin-right: 5px;
 }
 
-#user-gender, #user-city {
+#profile-gender, #profile-city {
     margin-left: 5px;
+}
+
+#schedule {
+    max-width: 1400px;
+}
+
+#schedule-table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+#schedule-table th {
+    width: 12.5%;
+    height: 50px;
+}
+
+#schedule-add {
+    margin-left: 10px;
+}
+
+#schedule-table td {
+    position: relative;
+    height: 50px;
+    border: 2px solid var(--color0);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.schedule-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 8px;
+    background-color: lightgray;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 100ms;
+}
+
+.schedule-block > h1 {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.schedule-block > input, .schedule-block > select {
+    display: none;
+}
+
+.schedule-block > button {
+    display: none;
+    margin-top: 10px;
+}
+
+.schedule-block-open {
+    width: 250px !important;
+    height: initial !important;
+    font-size: initial;
+    border: 5px solid var(--color1);
+    padding: 20px;
+    cursor: default;
+    z-index: 20;
+}
+
+.schedule-block-open > h1 {
+    display: none;
+}
+
+.schedule-block-open > input, .schedule-block-open > select, .schedule-block-open > button {
+    display: initial;
+}
+
+#matches {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#matches-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.match-person {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    margin: 10px;
+    border: 2px solid var(--color0);
+    border-radius: 20px;
+}
+
+.match-person > span {
+    font-size: 20px;
+    margin: 0 20px;
+}
+
+.match-person > button {
+    margin: 0 20px;
+}
+
+@media only screen and (max-width: 1000px) {
+    :root {
+        --user-nav-width: 0px;
+    }
+    
+    #user-nav {
+        position: initial;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        border-right: 0;
+        border-bottom: 2px solid var(--color0);
+        margin-top: -50px;
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    .match-person {
+        flex-direction: column;
+    }
+
+    .match-person > span {
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .match-person > button {
+        margin: 10px 0 0 0;
+    }
 }

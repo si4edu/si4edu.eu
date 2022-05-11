@@ -65,6 +65,8 @@ function registerAutorun() {
             }
         }).then(data => {
             localStorage.token = data;
+            updatePage('/user');
+            getProfile();
         });
     };
     document.getElementById('login-form').onsubmit = e => {
@@ -95,6 +97,8 @@ function registerAutorun() {
             }
         }).then(data => {
             localStorage.token = data;
+            updatePage('/user');
+            getProfile();
         });
     };
 }

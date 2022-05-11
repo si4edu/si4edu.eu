@@ -1,15 +1,17 @@
 <div id="user" class="page" style="display: none;">
-    <div style="position: absolute; left: 0; top: 0; width: 200px; height: 100%; background-color: red;">
-        
+    <div id="user-nav">
+        <a class="user-link page-link" href="/user/profile">Profile</a>
+        <a class="user-link page-link" href="/user/schedule">Schedule</a>
+        <a class="user-link page-link" href="/user/matches">Matches</a>
     </div>
-    <div id="user-box">
-        <h1 id="user-name" style="display: flex; justify-content: center;"></h1>
-        <h2 id="user-role" style="display: flex; justify-content: center;"></h2>
-        <form id="user-form">
-            <input id="user-school" type="text" placeholder="School" required>
+    <div id="profile" class="page" style="display: none;">
+        <h1 id="profile-name" style="margin-top: 0;"></h1>
+        <h3 id="profile-role" style="margin-top: 0;"></h3>
+        <form id="profile-form">
+            <input id="profile-school" type="text" placeholder="School" required>
             <div style="display: flex; width: 100%;">
-                <input id="user-age" type="number" placeholder="Age" min="13" max="100" disabled>
-                <select id="user-gender" disabled>
+                <input id="profile-age" type="number" placeholder="Age" min="13" max="100">
+                <select id="profile-gender">
                     <option value="" disabled selected>Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -17,86 +19,156 @@
                 </select>
             </div>
             <div style="display: flex; width: 100%;">
-                <select id="user-country" disabled>
+                <select id="profile-country">
                     <option value="" disabled selected>Country</option>
                     <option value="pl">Poland</option>
                     <option value="ua">Ukraine</option>
                     <option value="other">Other</option>
                 </select>
-                <input id="user-city" type="text" placeholder="City" required>
+                <input id="profile-city" type="text" placeholder="City" required>
             </div>
-            <fieldset class="user-fieldset">
+            <fieldset class="profile-fieldset">
                 <h3>Subjects</h3>
                 <div>
                     <label>
-                        <input id="user-subject-biology" type="checkbox">
+                        <input id="profile-subject-biology" type="checkbox">
                         Biology
                     </label>
                     <label>
-                        <input id="user-subject-chemistry" type="checkbox">
+                        <input id="profile-subject-chemistry" type="checkbox">
                         Chemistry
                     </label>
                     <label>
-                        <input id="user-subject-mathematics" type="checkbox">
+                        <input id="profile-subject-mathematics" type="checkbox">
                         Mathematics
                     </label>
                     <label>
-                        <input id="user-subject-physics" type="checkbox">
+                        <input id="profile-subject-physics" type="checkbox">
                         Physics
                     </label>
                     <label>
-                        <input id="user-subject-geography" type="checkbox">
+                        <input id="profile-subject-geography" type="checkbox">
                         Geography
                     </label>
                     <label>
-                        <input id="user-subject-polish" type="checkbox">
+                        <input id="profile-subject-polish" type="checkbox">
                         Polish
                     </label>
                     <label>
-                        <input id="user-subject-english" type="checkbox">
+                        <input id="profile-subject-english" type="checkbox">
                         English
                     </label>
                     <label>
-                        <input id="user-subject-german" type="checkbox">
+                        <input id="profile-subject-german" type="checkbox">
                         German
                     </label>
                     <label>
-                        <input id="user-subject-french" type="checkbox">
+                        <input id="profile-subject-french" type="checkbox">
                         French
                     </label>
                 </div>
             </fieldset>
-            <fieldset class="user-fieldset">
+            <fieldset class="profile-fieldset">
                 <h3>Lesson Type</h3>
                 <div>
                     <label>
-                        <input id="user-lesson-irl" type="checkbox">
+                        <input id="profile-lesson-irl" type="checkbox">
                         In person
                     </label>
                     <label>
-                        <input id="user-lesson-online" type="checkbox">
+                        <input id="profile-lesson-online" type="checkbox">
                         Online
                     </label>
                 </div>
             </fieldset>
-            <fieldset class="user-fieldset">
+            <fieldset class="profile-fieldset">
                 <h3>Languages</h3>
                 <div>
                     <label>
-                        <input id="user-lang-polish" type="checkbox">
+                        <input id="profile-lang-polish" type="checkbox">
                         Polish
                     </label>
                     <label>
-                        <input id="user-lang-english" type="checkbox">
+                        <input id="profile-lang-english" type="checkbox">
                         English
                     </label>
                     <label>
-                        <input id="user-lang-ukrainian" type="checkbox">
+                        <input id="profile-lang-ukrainian" type="checkbox">
                         Ukrainian
                     </label>
                 </div>
             </fieldset>
-            <button id="user-submit" type="submit" class="button">Save</button>
+            <div id="profile-captcha" class="g-recaptcha" data-sitekey="6LcE8MgfAAAAACyqLV9z575M8qF6eDSj--Mv6ozH" data-callback="onCaptcha" data-expired-callback="onCaptchaExpired"></div>
+            <button id="profile-submit" style="margin-top: 20px;" type="submit" class="button">Save</button>
         </form>
+    </div>
+    <div id="schedule" class="page" style="display: none;">
+        <button id="schedule-submit" class="button">Save</button>
+        <button id="schedule-add" class="button">Add</button>
+        <table id="schedule-table">
+            <tr>
+                <th></th>
+                <th id="schedule-day-1">Monday</th>
+                <th id="schedule-day-2">Tuesday</th>
+                <th id="schedule-day-3">Wednesday</th>
+                <th id="schedule-day-4">Thursday</th>
+                <th id="schedule-day-5">Friday</th>
+                <th id="schedule-day-6">Saturday</th>
+                <th id="schedule-day-7">Sunday</th>
+            </tr>
+            <tr>
+                <td>6:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>7:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>8:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>9:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>10:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>11:00 am</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>12:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>4:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>5:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>6:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>7:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>8:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>9:00 pm</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+        </table>
+    </div>
+    <div id="matches" class="page" style="display: none;">
+        <h1 style="margin-top: 0;">Matches</h1>
+        <div id="matches-list"></div>
+        <button id="matches-new"  style="margin-top: 20px;" class="button">New Match</button>
     </div>
 </div>

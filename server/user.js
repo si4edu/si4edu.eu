@@ -7,6 +7,39 @@ if (!FS.existsSync('users/users.json')) { FS.writeFileSync('users/users.json', '
 const users = JSON.parse(FS.readFileSync('users/users.json'));
 const emails = JSON.parse(FS.readFileSync('users/emails.json'));
 
+const transporter = createTransport({
+    host: 'smtp.mail.us-east-1.awsapps.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'noreply@si4edu.eu',
+        pass: SECRETS.pass
+    }
+});
+function sendConfirmationMail(user, token) {
+    transporter.sendMail({
+        from: '"SI4EDU" noreply@si4edu.eu',
+        to: user.email,
+        subject: 'SI4EDU Confirm Registration',
+        html:
+            `<!DOCTYPE html>
+        <body style="font-size: 20px;">
+            <div style="margin: 0 auto; width: 100%; max-width: 800px">
+                <div>
+                    <img style="width: 90px; height: 60px;" src="https://user-images.githubusercontent.com/31388661/165814956-015c59ac-e7f2-4556-8a58-1d4dc4d3aefc.png" alt="Logo" />
+                    <h1 style="margin: 10px 0; color: #20469B; font-size: 50px;">Welcome to SI4EDU!</h1>
+                </div>
+                <div style="color: #20469B;">
+                    <p style="margin: 30px 0;">Dear ${user.name},<br>Complete registration by clicking the button below:</p>
+                    <a style="background-color: #F9E319; color: #000; padding: 15px; margin: 10px 0; border-radius: 20px; font-size: 18px; text-decoration: none;" href="${URL}/user/confirm?${token}">Confirm Email</a></p>
+                    <hr style="margin: 30px 0 10px 0;">
+                    <p style="font-size: 15px;">If you did not request this email, please ignore it.</p>
+                </div>
+            </div>
+        </body>`,
+    });
+}
+
 app.post('/user/register', res => {
     res.onAborted(() => { });
     readJson(res, data => {
@@ -38,6 +71,8 @@ app.post('/user/register', res => {
 
             data.token = generateToken(users);
             data.confirmed = false;
+            data.schedule = [];
+            data.matches = [];
             FS.writeFileSync(`users/${data.email}`, JSON.stringify(data));
 
             users[data.token] = data.email;
@@ -55,7 +90,6 @@ app.post('/user/register', res => {
         delete data.captcha;
     });
 });
-
 app.post('/user/login', res => {
     res.onAborted(() => { });
     readJson(res, data => {
@@ -88,7 +122,6 @@ app.post('/user/login', res => {
         delete data.captcha;
     });
 });
-
 app.get('/user/confirm', (res, req) => {
     res.onAborted(() => { });
     const token = req.getQuery();
@@ -104,79 +137,163 @@ app.get('/user/confirm', (res, req) => {
         res.writeStatus('302');
         res.writeHeader('Location', `/?${user.token}`);
     } else {
-        res.writeStatus('400');
-        res.end(html);
+        res.writeStatus('302');
+        res.writeHeader('Location', '/');
     }
 });
-
 app.get('/user/info', (res, req) => {
     res.onAborted(() => { });
+
     const token = req.getQuery();
-    if (users.hasOwnProperty(token)) {
-        res.end(FS.readFileSync(`users/${users[token]}`));
-    } else {
-        res.writeStatus('400'); res.end();
-    }
+    if (!checkAuth(res, token)) { return; }
+
+    res.end(FS.readFileSync(`users/${users[token]}`));
 });
-
-app.put('/user/update', (res, req) => {
+app.put('/user/profile/update', (res, req) => {
     res.onAborted(() => { });
-    const token = req.getQuery();
-    if (users.hasOwnProperty(token)) {
-        readJson(res, data => {
-            if (
-                Object.keys(data).length !== 5 ||
-                !data.hasOwnProperty('school') || typeof data.school !== 'string' ||
-                !data.hasOwnProperty('city') || typeof data.city !== 'string' ||
-                !data.hasOwnProperty('subjects') || !Array.isArray(data.subjects) ||
-                !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
-                !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
-            ) {
-                res.writeStatus('400'); res.end();
-                return;
-            }
 
+    const token = req.getQuery();
+    if (!checkAuth(res, token)) { return; }
+
+    readJson(res, data => {
+        if (
+            Object.keys(data).length !== 9 ||
+            !data.hasOwnProperty('captcha') || typeof data.captcha !== 'string' ||
+            !data.hasOwnProperty('school') || typeof data.school !== 'string' ||
+            !data.hasOwnProperty('age') || !Number.isInteger(data.age) ||
+            !data.hasOwnProperty('gender') || typeof data.gender !== 'string' ||
+            !data.hasOwnProperty('country') || typeof data.country !== 'string' ||
+            !data.hasOwnProperty('city') || typeof data.city !== 'string' ||
+            !data.hasOwnProperty('subjects') || !Array.isArray(data.subjects) ||
+            !data.hasOwnProperty('lessons') || !Array.isArray(data.lessons) ||
+            !data.hasOwnProperty('langs') || !Array.isArray(data.langs)
+        ) {
+            res.writeStatus('400'); res.end();
+            return;
+        }
+
+        checkCaptcha(data.captcha, () => {
             const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
             user.school = data.school;
+            user.age = data.age;
+            user.gender = data.gender;
+            user.country = data.country;
             user.city = data.city;
             user.subjects = data.subjects;
             user.lessons = data.lessons;
             user.langs = data.langs;
             FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
-            
+    
             res.end();
         }, () => {
             res.writeStatus('400'); res.end();
         });
-    } else {
+    }, () => {
         res.writeStatus('400'); res.end();
+    });
+});
+app.get('/user/schedule/list', (res, req) => {
+    res.onAborted(() => { });
+
+    const token = req.getQuery();
+    if (!checkAuth(res, token)) { return; }
+});
+app.put('/user/schedule/update', (res, req) => {
+    res.onAborted(() => { });
+
+    const token = req.getQuery();
+    if (!checkAuth(res, token)) { return; }
+
+    readJson(res, data => {
+        if (!Array.isArray(data)) {
+            res.writeStatus('400'); res.end();
+            return;
+        }
+    
+        const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
+        user.schedule = data;
+        console.log(user.schedule);
+        FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
+        
+        res.end();
+    }, () => {
+        res.writeStatus('400'); res.end();
+    });
+});
+app.get('/user/matches/list', (res, req) => {
+    res.onAborted(() => { });
+
+    const token = req.getQuery();
+    if (!checkAuth(res, token)) { return; }
+});
+app.post('/user/matches/add', (res, req) => {
+    res.onAborted(() => { });
+
+    const token = req.getQuery();
+    if (!checkAuth(res, token)) { return; }
+
+    const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
+    const irl = user.lessons.indexOf('irl') !== -1;
+    const online = user.lessons.indexOf('online') !== -1;
+    // FIXME: const matchUser = find(irl && other.irl && user.city === other.city && subjects || online && subjects);
+    const matchUser = user;
+    if (matchUser) {
+        const match = {
+            name: matchUser.name,
+            email: matchUser.email,
+            age: matchUser.age,
+            gender: matchUser.gender,
+            subjects: matchUser.subjects,
+            lessons: matchUser.lessons,
+            langs: matchUser.langs,
+        };
+        user.matches.push(match);
+        FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
+        res.end(JSON.stringify(match));
+    } else {
+        res.writeStatus('400'); res.end('0');
     }
 });
+app.del('/user/matches/remove', (res, req) => {
+    res.onAborted(() => { });
 
+    const query = req.getQuery().split('&');
+    const token = query[0];
+    if (!checkAuth(res, token)) { return; }
 
-// app.get('/user/schedule', (res, req) => {
-//     res.onAborted(() => { });
-//     const token = req.getQuery();
-//     if (users.hasOwnProperty(token)) {
-//         const email = users(token);
-//         const user = JSON.parse(FS.readFileSync(`users/${email}`));
+    if (query.length !== 2) {
+        res.writeStatus('400'); res.end();
+        return;
+    }
 
-//         // schedule: [
-//         //     {
-//         //         //TODO change to date
-//         //         day: 1,
-//         //         startTime: 6.30,
-//         //         endTime: 8.30,
-//         //         lesson: 'Mathematics',
-//         //         subject: 'Some subject',
-//         //         buddyEmail: 'some@mail.com'
-//         //     }
-//         // ]
-//     } else {
-//         res.writeStatus('400');
-//         res.end(html);
-//     }
-// });
+    let index;
+    try {
+        index = parseInt(query[1]);
+    } catch (e) {
+        res.writeStatus('400'); res.end();
+        return;
+    }
+
+    const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
+    if (index < 0 || index >= user.matches.length) {
+        res.writeStatus('400'); res.end();
+        return;
+    }
+
+    user.matches.splice(index, 1);
+    FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
+
+    res.end();
+});
+
+function checkAuth(res, token) {
+    if (users.hasOwnProperty(token)) {
+        return true;
+    } else {
+        res.writeStatus('400'); res.end();
+        return false;
+    }
+}
 
 function generateToken(obj) {
     let token;
@@ -232,39 +349,5 @@ function readJson(res, success) {
                 buffer = Buffer.concat([chunk]);
             }
         }
-    });
-}
-
-const transporter = createTransport({
-    host: 'smtp.mail.us-east-1.awsapps.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: 'noreply@si4edu.eu',
-        pass: SECRETS.pass
-    }
-});
-
-function sendConfirmationMail(user, token) {
-    transporter.sendMail({
-        from: '"SI4EDU" noreply@si4edu.eu',
-        to: user.email,
-        subject: 'SI4EDU Confirm Registration',
-        html:
-            `<!DOCTYPE html>
-        <body style="font-size: 20px;">
-            <div style="margin: 0 auto; width: 100%; max-width: 800px">
-                <div>
-                    <img style="width: 90px; height: 60px;" src="https://user-images.githubusercontent.com/31388661/165814956-015c59ac-e7f2-4556-8a58-1d4dc4d3aefc.png" alt="Logo" />
-                    <h1 style="margin: 10px 0; color: #20469B; font-size: 50px;">Welcome to SI4EDU!</h1>
-                </div>
-                <div style="color: #20469B;">
-                    <p style="margin: 30px 0;">Dear ${user.name},<br>Complete registration by clicking the button below:</p>
-                    <a style="background-color: #F9E319; color: #000; padding: 15px; margin: 10px 0; border-radius: 20px; font-size: 18px; text-decoration: none;" href="${URL}/user/confirm?${token}">Confirm Email</a></p>
-                    <hr style="margin: 30px 0 10px 0;">
-                    <p style="font-size: 15px;">If you did not request this email, please ignore it.</p>
-                </div>
-            </div>
-        </body>`,
     });
 }

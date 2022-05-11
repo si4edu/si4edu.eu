@@ -2,8 +2,6 @@ embed('client/js/math.js');
 embed('client/js/lang.js');
 embed('client/js/register.js');
 embed('client/js/user.js');
-embed('client/js/schedule.js');
-embed('client/js/matches.js');
 
 function updatePage(href) {
     for (const page of document.getElementsByClassName('page')) {
@@ -23,12 +21,23 @@ function updatePage(href) {
     }
     page.style = '';
 
+    if (path[1] == 'user') {
+        let userPage = document.getElementById(path[path.length - 1]);
+        if (path.length < 3 || !userPage) {
+            href = '/user/profile';
+            path = href.split('/');
+            userPage = document.getElementById(path[path.length - 1]);
+            history.replaceState(null, '', href);
+        }
+        userPage.style = '';
+    }
+
     if (href != '/') {
-        if (href === '/user' && !localStorage.token) {
+        if (href.startsWith('/user/') && !localStorage.token) {
             updatePage('/');
             return;
         }
-        document.querySelector(`[href="/${path[1]}"]`)?.classList.add('page-link-active');
+        document.querySelector(`[href="/${path.slice(1).join('/')}"]`)?.classList.add('page-link-active');
     }
 }
 
