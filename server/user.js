@@ -85,6 +85,7 @@ app.post('/user/register', res => {
 
             res.end(data.token);
         }, () => {
+            console.log('Captcha failed');
             res.writeStatus('400'); res.end();
         });
         delete data.captcha;
@@ -212,7 +213,6 @@ app.put('/user/schedule/update', (res, req) => {
     
         const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
         user.schedule = data;
-        console.log(user.schedule);
         FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
         
         res.end();

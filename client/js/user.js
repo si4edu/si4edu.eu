@@ -236,9 +236,9 @@ function userAutorun() {
                     person: b.person.value,
                     subject: b.subject.value,
                     lesson: b.lesson.value,
-                    day: parseInt(b.dayInput.value),
-                    start: parseInt(b.startInput.value),
-                    time: parseInt(b.timeInput.value),
+                    day: parseInt(b.day),
+                    start: parseInt(b.start),
+                    time: parseInt(b.time),
                 }})
             ),
         });
