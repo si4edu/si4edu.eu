@@ -148,7 +148,9 @@ app.get('/user/info', (res, req) => {
     const token = req.getQuery();
     if (!checkAuth(res, token)) { return; }
 
-    res.end(FS.readFileSync(`users/${users[token]}`));
+    const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
+    user.matches = user.matches.map(m => matchInfo(m));
+    res.end(JSON.stringify(user));
 });
 app.put('/user/profile/update', (res, req) => {
     res.onAborted(() => { });
@@ -184,7 +186,7 @@ app.put('/user/profile/update', (res, req) => {
             user.lessons = data.lessons;
             user.langs = data.langs;
             FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
-    
+
             res.end();
         }, () => {
             res.writeStatus('400'); res.end();
@@ -192,12 +194,6 @@ app.put('/user/profile/update', (res, req) => {
     }, () => {
         res.writeStatus('400'); res.end();
     });
-});
-app.get('/user/schedule/list', (res, req) => {
-    res.onAborted(() => { });
-
-    const token = req.getQuery();
-    if (!checkAuth(res, token)) { return; }
 });
 app.put('/user/schedule/update', (res, req) => {
     res.onAborted(() => { });
@@ -210,21 +206,15 @@ app.put('/user/schedule/update', (res, req) => {
             res.writeStatus('400'); res.end();
             return;
         }
-    
+
         const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
         user.schedule = data;
         FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
-        
+
         res.end();
     }, () => {
         res.writeStatus('400'); res.end();
     });
-});
-app.get('/user/matches/list', (res, req) => {
-    res.onAborted(() => { });
-
-    const token = req.getQuery();
-    if (!checkAuth(res, token)) { return; }
 });
 app.post('/user/matches/add', (res, req) => {
     res.onAborted(() => { });
@@ -233,23 +223,11 @@ app.post('/user/matches/add', (res, req) => {
     if (!checkAuth(res, token)) { return; }
 
     const user = JSON.parse(FS.readFileSync(`users/${users[token]}`));
-    const irl = user.lessons.indexOf('irl') !== -1;
-    const online = user.lessons.indexOf('online') !== -1;
-    // FIXME: const matchUser = find(irl && other.irl && user.city === other.city && subjects || online && subjects);
-    const matchUser = user;
-    if (matchUser) {
-        const match = {
-            name: matchUser.name,
-            email: matchUser.email,
-            age: matchUser.age,
-            gender: matchUser.gender,
-            subjects: matchUser.subjects,
-            lessons: matchUser.lessons,
-            langs: matchUser.langs,
-        };
-        user.matches.push(match);
+    let matchEmail = Object.values(users).find(email => email !== user.email && !user.matches.find(other => email === other));
+    if (matchEmail) {
+        user.matches.push(matchEmail);
         FS.writeFileSync(`users/${user.email}`, JSON.stringify(user));
-        res.end(JSON.stringify(match));
+        res.end(JSON.stringify(matchInfo(matchEmail)));
     } else {
         res.writeStatus('400'); res.end('0');
     }
@@ -285,6 +263,20 @@ app.del('/user/matches/remove', (res, req) => {
 
     res.end();
 });
+
+function matchInfo(match) {
+    let user = JSON.parse(FS.readFileSync(`users/${match}`));
+    user = {
+        name: user.name,
+        email: user.email,
+        age: user.age,
+        gender: user.gender,
+        subjects: user.subjects,
+        lessons: user.lessons,
+        langs: user.langs,
+    };
+    return user;
+}
 
 function checkAuth(res, token) {
     if (users.hasOwnProperty(token)) {

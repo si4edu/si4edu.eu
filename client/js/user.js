@@ -23,7 +23,7 @@ function getProfile() {
     });
 }
 
-let scheduleAdding = false;
+let scheduleAdding;
 function makeScheduleBlock() {
     const block = document.createElement('div');
     block.classList.add('schedule-block');
@@ -40,46 +40,50 @@ function makeScheduleBlock() {
         block.nameText.innerText = block.name.value;
     };
     block.appendChild(block.name);
+
     block.person = document.createElement('select');
     updateScheduleBlockPeople(block);
     block.appendChild(block.person);
+
     block.subject = document.createElement('select');
     block.subject.innerHTML = '<option value="" disabled selected>Subject</option><option value="biology">Biology</option><option value="chemistry">Chemistry</option><option value="mathematics">Mathematics</option><option value="physics">Physics</option><option value="geography">Geography</option><option value="polish">Polish</option><option value="english">English</option><option value="german">German</option><option value="french">French</option>';
     block.appendChild(block.subject);
+
     block.lesson = document.createElement('select');
     block.lesson.innerHTML = '<option value="" disabled selected>Lesson Type</option><option value="irl">In person</option><option value="online">Online</option>';
     block.appendChild(block.lesson);
+
     block.dayInput = document.createElement('input');
     block.dayInput.setAttribute('placeholder', 'Week day');
     block.dayInput.setAttribute('type', 'number');
     block.dayInput.setAttribute('min', '1');
     block.dayInput.setAttribute('max', '7');
     block.dayInput.oninput = () => {
-        block.day = block.dayInput.value;
-        updateScheduleBlock(block);
+        block.day = Math.min(Math.max(block.dayInput.value, 1), 7);
     };
     block.appendChild(block.dayInput);
+
     block.startInput = document.createElement('input');
     block.startInput.setAttribute('placeholder', 'Start hour');
     block.startInput.setAttribute('type', 'number');
     block.startInput.setAttribute('min', '6');
-    block.startInput.setAttribute('max', '21');
+    block.startInput.setAttribute('max', '21.75');
+    block.startInput.setAttribute('step', '0.25');
     block.startInput.oninput = () => {
-        block.start = block.startInput.value;
-        updateScheduleBlock(block);
+        block.start = Math.min(Math.max(block.startInput.value, 6), 21.75);
     };
     block.appendChild(block.startInput);
-    block.timeInput = document.createElement('input');
-    block.timeInput.setAttribute('placeholder', 'Time in hours');
-    block.timeInput.setAttribute('type', 'number');
-    block.timeInput.setAttribute('min', '0.25');
-    block.timeInput.setAttribute('max', '15');
-    block.timeInput.setAttribute('step', '0.25');
-    block.timeInput.oninput = () => {
-        block.time = block.timeInput.value;
-        updateScheduleBlock(block);
+
+    block.endInput = document.createElement('input');
+    block.endInput.setAttribute('placeholder', 'End hour');
+    block.endInput.setAttribute('type', 'number');
+    block.endInput.setAttribute('min', '6.25');
+    block.endInput.setAttribute('max', '22');
+    block.endInput.setAttribute('step', '0.25');
+    block.endInput.oninput = () => {
+        block.end = Math.min(Math.max(block.endInput.value, 6.25), 22);
     };
-    block.appendChild(block.timeInput);
+    block.appendChild(block.endInput);
 
     const removeButton = document.createElement('button');
     removeButton.innerText = 'Remove';
@@ -107,12 +111,17 @@ function makeScheduleBlock() {
 }
 
 function updateScheduleBlockPeople(block) {
+    const value = block.person.value;
     block.person.innerHTML = '<option value="" disabled selected>Person</option>' + matches.map(m => `<option value="${m.email}">${m.name}</option>`).join('');
+    block.person.value = value;
 }
 
 function updateScheduleBlock(block) {
     updateScheduleBlockPeople(block);
-    block.style = `height:${block.time * 50 - 2}px`;
+    block.dayInput.value = block.day;
+    block.startInput.value = block.start;
+    block.endInput.value = block.end
+    block.style = `height:${(block.end - block.start) * 50 - 2}px`;
     block.style.transform = `translateY(${(block.start - 6) * 50}px)`;
     document.querySelector(`#schedule-table tr:nth-child(2) > td:nth-child(${parseInt(block.day) + 1})`).appendChild(block);
 }
@@ -125,7 +134,7 @@ function addScheduleBlock(data) {
     block.lesson.value = data.lesson;
     block.dayInput.value = block.day = data.day;
     block.startInput.value = block.start = data.start;
-    block.timeInput.value = block.time = data.time;
+    block.endInput.value = block.end = data.end;
     updateScheduleBlock(block);
 }
 
@@ -191,30 +200,11 @@ function userAutorun() {
     };
 
     window.onclick = () => {
-        document.querySelectorAll('.schedule-block').forEach(e => {
-            e.classList.remove('schedule-block-open');
+        document.querySelectorAll('.schedule-block').forEach(block => {
+            block.classList.remove('schedule-block-open');
+            updateScheduleBlock(block);
         });
     };
-    let block = makeScheduleBlock();
-    function cancelScheduleAdding() {
-        scheduleAdding = false;
-        block = makeScheduleBlock();
-        scheduleAdd.innerText = 'Add';
-    }
-    document.querySelectorAll('#schedule-table td').forEach(e => {
-        if (e.cellIndex !== 0) {
-            e.onmouseover = () => {
-                if (scheduleAdding) {
-                    e.appendChild(block);
-                }
-            };
-            e.onclick = () => {
-                block.style.pointerEvents = 'all';
-                cancelScheduleAdding();
-            };
-        }
-    });
-
     const scheduleAdd = document.getElementById('schedule-add');
     scheduleAdd.onclick = () => {
         scheduleAdding = !scheduleAdding;
@@ -225,21 +215,46 @@ function userAutorun() {
             cancelScheduleAdding();
         }
     };
+    let block;
+    function cancelScheduleAdding() {
+        scheduleAdding = false;
+        block = makeScheduleBlock();
+        scheduleAdd.innerText = 'Add';
+    }
+    cancelScheduleAdding();
+    document.querySelectorAll('#schedule-table td').forEach(e => {
+        if (e.cellIndex !== 0) {
+            e.onmouseover = () => {
+                if (scheduleAdding) {
+                    e.appendChild(block);
+                }
+            };
+            e.onclick = () => {
+                block.dayInput.value = block.day = e.cellIndex;
+                block.startInput.value = block.start = parseInt(e.parentNode.getAttribute('start'));
+                block.endInput.value = block.end = block.start + 1;
+                block.style.pointerEvents = 'all';
+                cancelScheduleAdding();
+            };
+        }
+    });
 
     const scheduleSubmit = document.getElementById('schedule-submit');
     scheduleSubmit.onclick = () => {
         fetch(`/user/schedule/update?${localStorage.token}`, {
             method: 'PUT',
             body: JSON.stringify(
-                Array.from(document.getElementsByClassName('schedule-block')).map(b => { return {
-                    name: b.name.value,
-                    person: b.person.value,
-                    subject: b.subject.value,
-                    lesson: b.lesson.value,
-                    day: parseInt(b.day),
-                    start: parseInt(b.start),
-                    time: parseInt(b.time),
-                }})
+                Array.from(document.getElementsByClassName('schedule-block')).map(block => {
+                    return {
+                        name: block.name.value,
+                        person: block.person.value,
+                        subject: block.subject.value,
+                        lesson: block.lesson.value,
+                        day: parseInt(block.day),
+                        start: parseInt(block.start),
+                        end: parseInt(block.end),
+                    }
+                })
             ),
         });
     };
